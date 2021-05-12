@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
 {
     int NegFactorSet[0];
     Pair** table = prepare_table(input_table);
+
     int* potential_effects = step0(table,NegFactorSet);
 
     //--DEBUG
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
 
 Pair** prepare_table(int input_table[][5])
 {
-    int inputSize = sizeof(input_table)/sizeof(input_table[0]);
+    int inputSize = sizeof(input_table);
     int inputRowSize = sizeof(input_table[0])/sizeof(int);
     Pair** table = malloc( sizeof(int*) * inputSize );
 
@@ -53,6 +54,7 @@ Pair** prepare_table(int input_table[][5])
             table[row][col] = make_pair(col,input_table[row][col]);
         }
     }
+    return table;
 }
 
 /*
@@ -64,7 +66,7 @@ Pair** prepare_table(int input_table[][5])
  */
 int* step0(Pair** main_table, int* NegFactorSet)
 {
-    int Wsize = sizeof(main_table[0])/sizeof(Pair);
+    int Wsize = sizeof(main_table[0]);
     int* W = malloc(Wsize);
     int W_index = 0;
     for (int i=0;i<Wsize;i++)
@@ -85,17 +87,18 @@ int* step0(Pair** main_table, int* NegFactorSet)
 int rowDuplicity(Pair** table,int factor)
 {
     Pair** rowSet = malloc(sizeof(table));
+    // memcpy(rowset,malloc(sizeof(table[0])))
     int rowPos = 0;
-    Pair* modif_coincidence = malloc(sizeof(table[0]));
     //loop through every row in table
-    for(int i=0;i<(sizeof(table)/sizeof(table[0]));i++)
+    for(int i=0;i<(sizeof(table));i++)
     {
-        memcpy(modif_coincidence,table[i],sizeof(table[i]));
-        modif_coincidence[factor]->value = 1-modif_coincidence[factor]->value;
-        if (pairListInList(rowSet,modif_coincidence))
+        table[i][factor]->value = 1-table[i][factor]->value;
+        if (pairListInList(rowSet,table[i]))
         {
+            table[i][factor]->value = 1-table[i][factor]->value;
             return 1;
         }
+        table[i][factor]->value = 1-table[i][factor]->value;
         rowSet[rowPos] = table[i];
         rowPos++;
     }

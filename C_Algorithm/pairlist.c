@@ -16,7 +16,7 @@ int pairs_equal(Pair p1, Pair p2)
 
 int pairInList(Pair* pairList, Pair pair)
 {
-    int pairListLen = sizeof(pairList)/sizeof(Pair);
+    int pairListLen = sizeof(pairList);
 
     for(int index=0;index<pairListLen;index++)
     {
@@ -30,7 +30,7 @@ int pairInList(Pair* pairList, Pair pair)
 
 int pairListsEqual(Pair* pairList1,Pair* pairList2)
 {
-    int pairListSize = sizeof(pairList1)/sizeof(Pair);
+    int pairListSize = sizeof(pairList1);
 
     for(int p1=0;p1<pairListSize;p1++)
     {
@@ -44,11 +44,11 @@ int pairListsEqual(Pair* pairList1,Pair* pairList2)
 
 int pairListInList(Pair** conditionList, Pair* pairList)
 {
-    int condSize = sizeof(conditionList)/sizeof(conditionList[0]);
+    int condSize = sizeof(conditionList);
 
     for(int index = 0; index<condSize;index++)
     {
-        if(pairListsEqual(conditionList[index], pairList))
+        if(conditionList[index] && pairListsEqual(conditionList[index], pairList))
         {
             return 1;
         }
