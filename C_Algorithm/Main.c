@@ -3,7 +3,7 @@
 #include <string.h>
 #include "pairlist.h"
 
-Pair** prepare_table(int input_table[][5]);
+Pair** prepare_table(int** input_table);
 int* step0(Pair** main_table, int* NegFactorSet);
 int rowDuplicity(Pair** table,int factor);
 int intArrayIn(int val, int* array);
@@ -16,6 +16,7 @@ int input_table[][5] = {
                 {0,1,1,0,1},
                 {1,0,1,0,1},
                 {0,0,0,1,1},
+                {0,0,0,0,0},
                 {0,0,0,0,0}
                 };
 
@@ -25,7 +26,16 @@ int input_table[][5] = {
 int main(int argc, char* argv[])
 {
     int NegFactorSet[0];
-    Pair** table = prepare_table(input_table);
+    int rows = 9;
+    int cols = 5;
+    Pair** table = prepare_table(input_table, rows, cols);
+
+    for (int i = 0; i < 9;i++) {
+        for (int j = 0; j < 5;j++) {
+            printf("%d", table[i][j]->value);
+        }
+        printf("\n");
+    }
 
     int* potential_effects = step0(table,NegFactorSet);
 
@@ -40,18 +50,16 @@ int main(int argc, char* argv[])
 
 }
 
-Pair** prepare_table(int input_table[][5])
+Pair** prepare_table(int** input_table, int rows, int cols)
 {
-    int inputSize = sizeof(input_table);
-    int inputRowSize = sizeof(input_table[0])/sizeof(int);
-    Pair** table = malloc( sizeof(int*) * inputSize );
+    Pair** table = malloc( sizeof(Pair*) * rows );
 
-    for(int row=0;row<(inputSize);row++)
+    for(int r=0;r<rows;r++)
     {
-        table[row] = malloc( sizeof(Pair) * inputRowSize );
-        for(int col=0;col<inputRowSize;col++)
+        table[r] = malloc( sizeof(Pair) * cols );
+        for(int c=0;c<cols;c++)
         {
-            table[row][col] = make_pair(col,input_table[row][col]);
+            table[r][c] = make_pair(c,input_table[r][c]);
         }
     }
     return table;
@@ -87,6 +95,7 @@ int* step0(Pair** main_table, int* NegFactorSet)
 int rowDuplicity(Pair** table,int factor)
 {
     Pair** rowSet = malloc(sizeof(table));
+    memset(rowSet, 0, sizeof(*rowSet));
     // memcpy(rowset,malloc(sizeof(table[0])))
     int rowPos = 0;
     //loop through every row in table

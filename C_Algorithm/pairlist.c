@@ -20,7 +20,7 @@ int pairInList(Pair* pairList, Pair pair)
 
     for(int index=0;index<pairListLen;index++)
     {
-        if(pairs_equal(pair,pairList[index]))
+        if(pairList[index] && pairs_equal(pair,pairList[index]))
         {
             return 1;
         }
@@ -34,12 +34,12 @@ int pairListsEqual(Pair* pairList1,Pair* pairList2)
 
     for(int p1=0;p1<pairListSize;p1++)
     {
-        if(pairInList(pairList2,pairList1[p1]))
+        if(!pairList1[p1] || !pairInList(pairList2,pairList1[p1]))
         {
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 int pairListInList(Pair** conditionList, Pair* pairList)
