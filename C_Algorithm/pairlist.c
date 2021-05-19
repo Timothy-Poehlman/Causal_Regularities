@@ -14,11 +14,9 @@ int pairs_equal(Pair p1, Pair p2)
     return ((p1->index == p2->index) && (p1->value == p2->value));
 }
 
-int pairInList(Pair* pairList, Pair pair)
+int pairInList(Pair* pairList, Pair pair, int rows, int cols)
 {
-    int pairListLen = sizeof(pairList);
-
-    for(int index=0;index<pairListLen;index++)
+    for(int index=0;index<cols;index++)
     {
         if(pairList[index] && pairs_equal(pair,pairList[index]))
         {
@@ -28,13 +26,11 @@ int pairInList(Pair* pairList, Pair pair)
     return 0;
 }
 
-int pairListsEqual(Pair* pairList1,Pair* pairList2)
+int pairListsEqual(Pair* pairList1,Pair* pairList2, int rows, int cols)
 {
-    int pairListSize = sizeof(pairList1);
-
-    for(int p1=0;p1<pairListSize;p1++)
+    for(int p1=0;p1<cols;p1++)
     {
-        if(!pairList1[p1] || !pairInList(pairList2,pairList1[p1]))
+        if(!pairList1[p1] || !pairInList(pairList2,pairList1[p1], rows, cols))
         {
             return 0;
         }
@@ -42,13 +38,11 @@ int pairListsEqual(Pair* pairList1,Pair* pairList2)
     return 1;
 }
 
-int pairListInList(Pair** conditionList, Pair* pairList)
+int pairListInList(Pair** conditionList, Pair* pairList, int rows, int cols)
 {
-    int condSize = sizeof(conditionList);
-
-    for(int index = 0; index<condSize;index++)
+    for(int index = 0; index<rows;index++)
     {
-        if(conditionList[index] && pairListsEqual(conditionList[index], pairList))
+        if(conditionList[index] && pairListsEqual(conditionList[index], pairList, rows, cols))
         {
             return 1;
         }

@@ -3,22 +3,22 @@
 #include <string.h>
 #include "pairlist.h"
 
-Pair** prepare_table(int** input_table);
-int* step0(Pair** main_table, int* NegFactorSet);
-int rowDuplicity(Pair** table,int factor);
+Pair** prepare_table(FILE* input_table, int rows, int cols);
+int* step0(Pair** main_table, int* NegFactorSet,int rows, int cols);
+int rowDuplicity(Pair** table,int factor,int rows, int cols);
 int intArrayIn(int val, int* array);
 
-int input_table[][5] = {
-                {1,1,1,1,1},
-                {1,1,1,0,1},
-                {1,0,1,1,1},
-                {0,1,1,1,1},
-                {0,1,1,0,1},
-                {1,0,1,0,1},
-                {0,0,0,1,1},
-                {0,0,0,0,0},
-                {0,0,0,0,0}
-                };
+// int input_table[][5] = {
+//                 {1,1,1,1,1},
+//                 {1,1,1,0,1},
+//                 {1,0,1,1,1},
+//                 {0,1,1,1,1},
+//                 {0,1,1,0,1},
+//                 {1,0,1,0,1},
+//                 {0,0,0,1,1},
+//                 {0,0,0,0,0},
+//                 {0,0,0,0,0}
+//                 };
 
 // char* B = ['A','B','C','D','E'];
 
@@ -26,40 +26,56 @@ int input_table[][5] = {
 int main(int argc, char* argv[])
 {
     int NegFactorSet[0];
-    int rows = 9;
+    //get num coincidences and factors from argv:
+    int rows = 8;
     int cols = 5;
-    Pair** table = prepare_table(input_table, rows, cols);
 
-    for (int i = 0; i < 9;i++) {
-        for (int j = 0; j < 5;j++) {
+    //read csv
+    FILE* stream = fopen("TESTINPUT.csv", "r");
+
+
+    Pair** table = prepare_table(stream, rows, cols);
+
+    for (int i = 0; i < rows;i++) {
+        for (int j = 0; j < cols;j++) {
             printf("%d", table[i][j]->value);
         }
         printf("\n");
     }
 
-    int* potential_effects = step0(table,NegFactorSet);
+    int* potential_effects = step0(table,NegFactorSet, rows, cols);
 
-    //--DEBUG
-    printf("Potential Effects: [");
-    for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
-    {
-        printf("%d,",potential_effects[i]);
-    }
-    printf("]\n");
-    //--
+    // //--DEBUG
+    // printf("Potential Effects: [");
+    // for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
+    // {
+    //     printf("%d,",potential_effects[i]);
+    // }
+    // printf("]\n");
+    // //--
 
 }
 
-Pair** prepare_table(int** input_table, int rows, int cols)
+Pair** prepare_table(FILE* input_table, int rows, int cols)
 {
-    Pair** table = malloc( sizeof(Pair*) * rows );
+    Pair** table = malloc(sizeof(Pair*) * rows);
+    int r = 0;
+    int c = 0;
+    char line[2];
 
-    for(int r=0;r<rows;r++)
+    table[r] = malloc(sizeof(Pair) * cols);
+    while(fgets(line,2,input_table))
     {
-        table[r] = malloc( sizeof(Pair) * cols );
-        for(int c=0;c<cols;c++)
+        if(line[0] == ','){c++;}
+        else if(line[0]=='\n')
         {
-            table[r][c] = make_pair(c,input_table[r][c]);
+            r++;
+            c = 0;
+            table[r] = malloc(sizeof(Pair) * cols);
+        }
+        else
+        {
+            table[r][c] = make_pair(c,atoi(&line[0]));
         }
     }
     return table;
@@ -72,14 +88,14 @@ Pair** prepare_table(int** input_table, int rows, int cols)
  * Over every factor, we are collecting the set of factors that are possible effects, this set is W
  * B: set of all factors, main_table: C
  */
-int* step0(Pair** main_table, int* NegFactorSet)
+int* step0(Pair** main_table, int* NegFactorSet, int rows, int cols)
 {
     int Wsize = sizeof(main_table[0]);
     int* W = malloc(Wsize);
     int W_index = 0;
     for (int i=0;i<Wsize;i++)
     {
-        if(!(rowDuplicity(main_table, i) || intArrayIn(i, NegFactorSet)))
+        if(!(rowDuplicity(main_table, i, rows, cols) || intArrayIn(i, NegFactorSet)))
         {
             W[W_index] = i;
             W_index++;
@@ -92,24 +108,24 @@ int* step0(Pair** main_table, int* NegFactorSet)
     Check if the same row but negative factor already exists, if not, insert into set, else return 1
     int[i][j] table, i= coincidence, j = factor index
 */
-int rowDuplicity(Pair** table,int factor)
+int rowDuplicity(Pair** table,int factor, int rows, int cols)
 {
-    Pair** rowSet = malloc(sizeof(table));
-    memset(rowSet, 0, sizeof(*rowSet));
-    // memcpy(rowset,malloc(sizeof(table[0])))
-    int rowPos = 0;
+    Pair** rowSet = malloc(sizeof(Pair*) * rows);
+    // memset(rowSet, 0, sizeof(*rowSet));
     //loop through every row in table
-    for(int i=0;i<(sizeof(table));i++)
+    for(int rowPos=0;rowPos<rows;rowPos++)
     {
-        table[i][factor]->value = 1-table[i][factor]->value;
-        if (pairListInList(rowSet,table[i]))
+        rowSet[rowPos] = malloc(sizeof(Pair) * cols);
+        memset(rowSet, 0, sizeof(Pair)*cols);
+        table[rowPos][factor]->value = 1-table[rowPos][factor]->value;
+        if (pairListInList(rowSet,table[rowPos], rows, cols))
         {
-            table[i][factor]->value = 1-table[i][factor]->value;
+            table[rowPos][factor]->value = 1-table[rowPos][factor]->value;
             return 1;
         }
-        table[i][factor]->value = 1-table[i][factor]->value;
-        rowSet[rowPos] = table[i];
-        rowPos++;
+        table[rowPos][factor]->value = 1-table[rowPos][factor]->value;
+        rowSet[rowPos] = table[rowPos];
+        printf("rowpos:%d\n",rowPos);
     }
     return 0;
 }
