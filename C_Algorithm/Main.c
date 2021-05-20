@@ -90,11 +90,11 @@ Pair** prepare_table(FILE* input_table, int rows, int cols)
  */
 int* step0(Pair** main_table, int* NegFactorSet, int rows, int cols)
 {
-    int Wsize = sizeof(main_table[0]);
-    int* W = malloc(Wsize);
+    int* W = malloc(sizeof(int)*cols);
     int W_index = 0;
-    for (int i=0;i<Wsize;i++)
+    for (int i=0;i<cols;i++)
     {
+        printf("checking index %d\n", i);
         if(!(rowDuplicity(main_table, i, rows, cols) || intArrayIn(i, NegFactorSet)))
         {
             W[W_index] = i;
