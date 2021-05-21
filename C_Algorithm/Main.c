@@ -2,26 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pairlist.h"
+#include "conditionlist.h"
 
 Pair** prepare_table(FILE* input_table, int rows, int cols);
 int* step0(Pair** main_table, int* NegFactorSet,int rows, int cols);
 int rowDuplicity(Pair** table,int factor,int rows, int cols);
 int intArrayIn(int val, int* array);
 
-// int input_table[][5] = {
-//                 {1,1,1,1,1},
-//                 {1,1,1,0,1},
-//                 {1,0,1,1,1},
-//                 {0,1,1,1,1},
-//                 {0,1,1,0,1},
-//                 {1,0,1,0,1},
-//                 {0,0,0,1,1},
-//                 {0,0,0,0,0},
-//                 {0,0,0,0,0}
-//                 };
-
-// char* B = ['A','B','C','D','E'];
-
+int maxPotEffects = 0;
+int maxNumConditions = 0;
 
 int main(int argc, char* argv[])
 {
@@ -29,12 +18,14 @@ int main(int argc, char* argv[])
     //get num coincidences and factors from argv:
     int rows = 8;
     int cols = 5;
+    int* potential_effects;
+    ConditionList conditionList;
 
     //read csv
     FILE* stream = fopen("TESTINPUT.csv", "r");
 
 
-    Pair** table = prepare_table(stream, rows, cols);
+    ConditionList table = prepare_table(stream, rows, cols);
 
     for (int i = 0; i < rows;i++) {
         for (int j = 0; j < cols;j++) {
@@ -43,39 +34,55 @@ int main(int argc, char* argv[])
         printf("\n");
     }
 
-    int* potential_effects = step0(table,NegFactorSet, rows, cols);
+    potential_effects = step0(table,NegFactorSet, rows, cols);
 
-    // //--DEBUG
+    //--DEBUG
     // printf("Potential Effects: [");
     // for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
     // {
     //     printf("%d,",potential_effects[i]);
     // }
     // printf("]\n");
-    // //--
+    //--
+
+    //steps 2->5
+    for(int effect = 0; effect<maxPotEffects; effect++)
+    {
+        printf("_________________Effect Index:" + effect + "____________________\n");
+        
+        printf("ConditionList_________________");
+        conditionList = step2(table,potential_effects[effect]);
+        for(int pairList=0;pairList<maxNumConditions;pairList++)
+        {
+            printf(pairList);
+        }
+        maxNumConditions = 0;
+        printf("end ConditionList_______________________\n");
+        free(conditionList);
+    }
+    free(potential_effects);
 
 }
 
-Pair** prepare_table(FILE* input_table, int rows, int cols)
+ConditionList prepare_table(FILE* input_table, int rows, int cols)
 {
-    Pair** table = malloc(sizeof(Pair*) * rows);
-    int r = 0;
+    ConditionList table = make_CList();
     int c = 0;
     char line[2];
+    PairList pList = newPair();
 
-    table[r] = malloc(sizeof(Pair) * cols);
     while(fgets(line,2,input_table))
     {
         if(line[0] == ','){c++;}
         else if(line[0]=='\n')
         {
-            r++;
             c = 0;
-            table[r] = malloc(sizeof(Pair) * cols);
+            CList_append(table,pList);
+            pList = newPair();
         }
         else
         {
-            table[r][c] = make_pair(c,atoi(&line[0]));
+            pairList_append(pList, make_pair(c,atoi(&line[0])));
         }
     }
     return table;
@@ -99,8 +106,10 @@ int* step0(Pair** main_table, int* NegFactorSet, int rows, int cols)
         {
             W[W_index] = i;
             W_index++;
+            maxPotEffects++;
         }
     }
+    realloc(W,maxPotEffects*sizeof(int));
     return W;
 }
 
@@ -141,4 +150,24 @@ int intArrayIn(int val, int* array)
         }
     }
     return 0;
+}
+
+/*
+    maint_table: the original table of values
+    effect: the factor being examined
+
+    conditionList: a list of all sufficient conditions
+*/
+Pair** step2(Pair** main_table, int effect)
+{
+    Pair** conditionList = malloc(Pair* * rows);
+    for coincidence in main_table:
+        condition = malloc(Pair * cols);
+        for index,value in enumerate(coincidence):
+            if index != effect:
+                condition.append((index,value))
+            
+        if check_sufficient(condition, main_table, effect):
+            conditionList.append(condition)
+    return conditionList
 }

@@ -12,15 +12,10 @@ struct pair_list
     PairList next;
 } pair_list;
 
-typedef struct condition_list *ConditionList;
-struct condition_list
-{
-    PairList list;
-    int size;
-} condition_list;
-
 Pair make_pair(int index, int value);
+PairList make_pairList();
 int pairs_equal(Pair p1, Pair p2);
-int pairInList(Pair* pairList, Pair pair, int rows, int cols);
-int pairListsEqual(Pair* pairList1,Pair* pairList2, int rows, int cols);
-int pairListInList(Pair** conditionList, Pair* pairList, int rows, int cols);
+int pairInList(PairList pairList, Pair pair);
+int pairListsEqual(PairList pairList1,PairList pairList2);
+int pairListInList(ConditionList conditionList, PairList pairList);
+void pl_free(PairList l);
