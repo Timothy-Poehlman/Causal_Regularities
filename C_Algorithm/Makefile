@@ -1,5 +1,5 @@
 PROG = causal
-OBJS = Main.o pairlist.o
+OBJS = Main.o pairlist.o conditionlist.o
 CC = gcc
 CFLAGS = -g -Wall
 

@@ -14,8 +14,9 @@ struct pair_list
 
 Pair make_pair(int index, int value);
 PairList make_pairList();
+PairList copy_pairList(PairList p);
 int pairs_equal(Pair p1, Pair p2);
 int pairInList(PairList pairList, Pair pair);
 int pairListsEqual(PairList pairList1,PairList pairList2);
-int pairListInList(ConditionList conditionList, PairList pairList);
-void pl_free(PairList l);
+void pairList_free(PairList l);
+void pairList_append(PairList list, Pair p);

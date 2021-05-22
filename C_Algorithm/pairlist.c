@@ -9,7 +9,7 @@ Pair make_pair(int index, int value)
     return new_pair;
 }
 
-Pair make_pair_list()
+PairList make_pairList()
 {
     PairList pairList = malloc(sizeof(pair_list));
     pairList->list = malloc(0);
@@ -17,12 +17,16 @@ Pair make_pair_list()
     return pairList;
 }
 
-Pair make_pair_list_of_list()
-{
-    PairListofList pairListList = malloc(sizeof(pair_list_list));
-    pairListList->list = malloc(0);
-    pairListList->size = 0;
-    return pairListList;
+PairList copy_pairList(PairList p) {
+    PairList output = malloc(sizeof(pair_list));
+    Pair* templist = malloc(sizeof(Pair) * p->size);
+    for (int i = 0; i < p->size;i++) {
+        templist[i] = p->list[i];
+    }
+    output->list = templist;
+    output->size = p->size;
+    output->next = NULL;
+    return output;
 }
 
 int pairs_equal(Pair p1, Pair p2)
@@ -54,17 +58,6 @@ int pairListsEqual(PairList pairList1,PairList pairList2)
     return 1;
 }
 
-int pairListInList(PairListofList conditionList, PairList pairList)
-{
-    for(int index = 0; index<conditionList->size;index++)
-    {
-        if(conditionList->list[index] && pairListsEqual(conditionList->list[index], pairList))
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
 
 // def pairListListsEqual(Pair** pairListList1, Pair** pairListList2):
 //     if len(pairListList1) == len(pairListList2):

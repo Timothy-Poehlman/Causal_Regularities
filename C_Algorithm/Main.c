@@ -4,9 +4,9 @@
 #include "pairlist.h"
 #include "conditionlist.h"
 
-Pair** prepare_table(FILE* input_table, int rows, int cols);
-int* step0(Pair** main_table, int* NegFactorSet,int rows, int cols);
-int rowDuplicity(Pair** table,int factor,int rows, int cols);
+ConditionList prepare_table(FILE* input_table, int rows, int cols);
+int* step0(ConditionList main_table, int* NegFactorSet,int rows, int cols);
+int rowDuplicity(ConditionList table,int factor,int rows, int cols);
 int intArrayIn(int val, int* array);
 
 int maxPotEffects = 0;
@@ -27,14 +27,14 @@ int main(int argc, char* argv[])
 
     ConditionList table = prepare_table(stream, rows, cols);
 
-    for (int i = 0; i < rows;i++) {
-        for (int j = 0; j < cols;j++) {
-            printf("%d", table[i][j]->value);
-        }
-        printf("\n");
-    }
+    //for (int i = 0; i < rows;i++) {
+    //    for (int j = 0; j < cols;j++) {
+    //        printf("%d", table[i][j]->value);
+    //    }
+    //    printf("\n");
+    //}
 
-    potential_effects = step0(table,NegFactorSet, rows, cols);
+    //potential_effects = step0(table,NegFactorSet, rows, cols);
 
     //--DEBUG
     // printf("Potential Effects: [");
@@ -46,21 +46,21 @@ int main(int argc, char* argv[])
     //--
 
     //steps 2->5
-    for(int effect = 0; effect<maxPotEffects; effect++)
-    {
-        printf("_________________Effect Index:" + effect + "____________________\n");
-        
-        printf("ConditionList_________________");
-        conditionList = step2(table,potential_effects[effect]);
-        for(int pairList=0;pairList<maxNumConditions;pairList++)
-        {
-            printf(pairList);
-        }
-        maxNumConditions = 0;
-        printf("end ConditionList_______________________\n");
-        free(conditionList);
-    }
-    free(potential_effects);
+    //for(int effect = 0; effect<maxPotEffects; effect++)
+    //{
+    //    printf("_________________Effect Index:" + effect + "____________________\n");
+    //    
+    //    printf("ConditionList_________________");
+    //    conditionList = step2(table,potential_effects[effect]);
+    //    for(int pairList=0;pairList<maxNumConditions;pairList++)
+    //    {
+    //        printf(pairList);
+    //    }
+    //    maxNumConditions = 0;
+    //    printf("end ConditionList_______________________\n");
+    //    free(conditionList);
+    //}
+    //free(potential_effects);
 
 }
 
@@ -69,7 +69,7 @@ ConditionList prepare_table(FILE* input_table, int rows, int cols)
     ConditionList table = make_CList();
     int c = 0;
     char line[2];
-    PairList pList = newPair();
+    PairList pList = make_pairList();
 
     while(fgets(line,2,input_table))
     {
@@ -77,8 +77,8 @@ ConditionList prepare_table(FILE* input_table, int rows, int cols)
         else if(line[0]=='\n')
         {
             c = 0;
-            CList_append(table,pList);
-            pList = newPair();
+            CList_add(table,pList);
+            pList = make_pairList();
         }
         else
         {
@@ -95,7 +95,7 @@ ConditionList prepare_table(FILE* input_table, int rows, int cols)
  * Over every factor, we are collecting the set of factors that are possible effects, this set is W
  * B: set of all factors, main_table: C
  */
-int* step0(Pair** main_table, int* NegFactorSet, int rows, int cols)
+int* step0(ConditionList main_table, int* NegFactorSet, int rows, int cols)
 {
     int* W = malloc(sizeof(int)*cols);
     int W_index = 0;
@@ -109,7 +109,7 @@ int* step0(Pair** main_table, int* NegFactorSet, int rows, int cols)
             maxPotEffects++;
         }
     }
-    realloc(W,maxPotEffects*sizeof(int));
+    //realloc(W,maxPotEffects*sizeof(int));
     return W;
 }
 
@@ -117,24 +117,23 @@ int* step0(Pair** main_table, int* NegFactorSet, int rows, int cols)
     Check if the same row but negative factor already exists, if not, insert into set, else return 1
     int[i][j] table, i= coincidence, j = factor index
 */
-int rowDuplicity(Pair** table,int factor, int rows, int cols)
+int rowDuplicity(ConditionList table,int factor, int rows, int cols)
 {
-    Pair** rowSet = malloc(sizeof(Pair*) * rows);
+    ConditionList rowSet = make_CList();
     // memset(rowSet, 0, sizeof(*rowSet));
     //loop through every row in table
-    for(int rowPos=0;rowPos<rows;rowPos++)
-    {
-        rowSet[rowPos] = malloc(sizeof(Pair) * cols);
-        memset(rowSet, 0, sizeof(Pair)*cols);
-        table[rowPos][factor]->value = 1-table[rowPos][factor]->value;
-        if (pairListInList(rowSet,table[rowPos], rows, cols))
-        {
-            table[rowPos][factor]->value = 1-table[rowPos][factor]->value;
+
+    PairList current = table->list;
+    
+    while (current != NULL) {
+        PairList tempList = copy_pairList(current);
+        current->list[factor]->value = 1 - current->list[factor]->value;
+        if (CList_contains(rowSet, current)) {
+            current->list[factor]->value = 1 - current->list[factor]->value;
             return 1;
         }
-        table[rowPos][factor]->value = 1-table[rowPos][factor]->value;
-        rowSet[rowPos] = table[rowPos];
-        printf("rowpos:%d\n",rowPos);
+        current->list[factor]->value = 1 - current->list[factor]->value;
+        CList_add(rowSet, tempList);
     }
     return 0;
 }
@@ -158,7 +157,7 @@ int intArrayIn(int val, int* array)
 
     conditionList: a list of all sufficient conditions
 */
-Pair** step2(Pair** main_table, int effect)
+/*Pair** step2(Pair** main_table, int effect)
 {
     Pair** conditionList = malloc(Pair* * rows);
     for coincidence in main_table:
@@ -170,4 +169,4 @@ Pair** step2(Pair** main_table, int effect)
         if check_sufficient(condition, main_table, effect):
             conditionList.append(condition)
     return conditionList
-}
+}*/
