@@ -38,7 +38,9 @@ int main(int argc, char* argv[])
     printf("Potential Effects: [");
     for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
     {
-        printf("%d,",potential_effects[i]);
+        if(i!=0)
+        {printf(",");}
+        printf("%d",potential_effects[i]);
     }
     printf("]\n");
     //--
@@ -62,8 +64,7 @@ int main(int argc, char* argv[])
 
 }
 
-/*
- * STEP 0
+/* STEP 0
  * FactorTable is a hashtable/dictionary of all factors, factorA -> index | key -> value
  * For everything in W, we will have to test this
  * Over every factor, we are collecting the set of factors that are possible effects, this set is W
@@ -88,7 +89,7 @@ int* step0(ConditionList table, int* NegFactorSet)
 }
 
 
-/*
+/* STEP 2
     maint_table: the original table of values
     effect: the factor being examined
 
