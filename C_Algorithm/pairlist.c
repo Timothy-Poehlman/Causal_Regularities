@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "pairlist.h"
 
 Pair make_pair(int index, int value)
@@ -26,6 +27,7 @@ PairList copy_pairList(PairList p) {
     }
     output->list = templist;
     output->size = p->size;
+    output->location = p->location;
     output->next = NULL;
     return output;
 }
@@ -55,7 +57,7 @@ int pairs_equal(Pair p1, Pair p2)
 
 int pairInList(PairList pairList, Pair pair)
 {
-    for(int index=0;index<pairList->size;index++)
+    for(int index=0;index<pairList->location;index++)
     {
         if(pairList->list[index] && pairs_equal(pair,pairList->list[index]))
         {
@@ -67,7 +69,7 @@ int pairInList(PairList pairList, Pair pair)
 
 int pairListsEqual(PairList pairList1,PairList pairList2)
 {
-    for(int p1=0;p1<pairList1->size;p1++)
+    for(int p1=0;p1<pairList1->location;p1++)
     {
         if(!pairList1->list[p1] || !pairInList(pairList2,pairList1->list[p1]))
         {
@@ -77,6 +79,13 @@ int pairListsEqual(PairList pairList1,PairList pairList2)
     return 1;
 }
 
+void printPairList(PairList pl)
+{
+    for(int i=0;i<pl->location;i++)
+    {
+        printf("(i:%d,v:%d)",pl->list[i]->index,pl->list[i]->value);
+    }
+}
 
 // def pairListListsEqual(Pair** pairListList1, Pair** pairListList2):
 //     if len(pairListList1) == len(pairListList2):
