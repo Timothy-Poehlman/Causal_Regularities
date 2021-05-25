@@ -3,20 +3,14 @@
 #include <string.h>
 #include "conditionlist.h"
 
-ConditionList prepare_table(FILE* input_table, int rows, int cols);
-int* step0(ConditionList main_table, int* NegFactorSet,int rows, int cols);
-int rowDuplicity(ConditionList table,int factor,int rows, int cols);
+ConditionList prepare_table(FILE* input_table);
+int* step0(ConditionList main_table, int* NegFactorSet);
+int rowDuplicity(ConditionList table,int factor);
 int intArrayIn(int val, int* array);
-
-int maxPotEffects = 0;
-int maxNumConditions = 0;
 
 int main(int argc, char* argv[])
 {
     int NegFactorSet[0];
-    //get num coincidences and factors from argv:
-    int rows = 8;
-    int cols = 5;
     int* potential_effects;
     ConditionList conditionList;
 
@@ -24,7 +18,7 @@ int main(int argc, char* argv[])
     FILE* stream = fopen("TESTINPUT.csv", "r");
 
 
-    ConditionList table = prepare_table(stream, rows, cols);
+    ConditionList table = prepare_table(stream);
 
     PairList tmpTable = table->list;
     while(tmpTable)
@@ -37,15 +31,15 @@ int main(int argc, char* argv[])
         tmpTable = tmpTable->next;
     }
 
-    potential_effects = step0(table,NegFactorSet, rows, cols);
+    potential_effects = step0(table,NegFactorSet);
 
     //--DEBUG
-    // printf("Potential Effects: [");
-    // for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
-    // {
-    //     printf("%d,",potential_effects[i]);
-    // }
-    // printf("]\n");
+    printf("Potential Effects: [");
+    for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
+    {
+        printf("%d,",potential_effects[i]);
+    }
+    printf("]\n");
     //--
 
     //steps 2->5
@@ -67,7 +61,7 @@ int main(int argc, char* argv[])
 
 }
 
-ConditionList prepare_table(FILE* input_table, int rows, int cols)
+ConditionList prepare_table(FILE* input_table)
 {
     ConditionList table = make_CList();
     int c = 0;
@@ -76,7 +70,7 @@ ConditionList prepare_table(FILE* input_table, int rows, int cols)
 
     while(fgets(line,2,input_table))
     {
-        if(line[0] == ','){c++;}
+        if(line[0] == ',' || line[0] == '\r'){}
         else if(line[0]=='\n')
         {
             c = 0;
@@ -86,6 +80,7 @@ ConditionList prepare_table(FILE* input_table, int rows, int cols)
         else
         {
             pairList_append(pList, make_pair(c,atoi(&line[0])));
+            c++;
         }
     }
     return table;
@@ -96,20 +91,20 @@ ConditionList prepare_table(FILE* input_table, int rows, int cols)
  * FactorTable is a hashtable/dictionary of all factors, factorA -> index | key -> value
  * For everything in W, we will have to test this
  * Over every factor, we are collecting the set of factors that are possible effects, this set is W
- * B: set of all factors, main_table: C
+ * B: set of all factors, table: C
  */
-int* step0(ConditionList main_table, int* NegFactorSet, int rows, int cols)
+int* step0(ConditionList table, int* NegFactorSet)
 {
+    int cols = table->list->location;
     int* W = malloc(sizeof(int)*cols);
     int W_index = 0;
     for (int i=0;i<cols;i++)
     {
         printf("checking index %d\n", i);
-        if(!(rowDuplicity(main_table, i, rows, cols) || intArrayIn(i, NegFactorSet)))
+        if(!(rowDuplicity(table, i) || intArrayIn(i, NegFactorSet)))
         {
             W[W_index] = i;
             W_index++;
-            maxPotEffects++;
         }
     }
     //realloc(W,maxPotEffects*sizeof(int));
@@ -120,23 +115,25 @@ int* step0(ConditionList main_table, int* NegFactorSet, int rows, int cols)
     Check if the same row but negative factor already exists, if not, insert into set, else return 1
     int[i][j] table, i= coincidence, j = factor index
 */
-int rowDuplicity(ConditionList table,int factor, int rows, int cols)
+int rowDuplicity(ConditionList table,int factor)
 {
     ConditionList rowSet = make_CList();
     // memset(rowSet, 0, sizeof(*rowSet));
     //loop through every row in table
 
     PairList current = table->list;
+    PairList tmpList = NULL;
     
     while (current != NULL) {
-        PairList tempList = copy_pairList(current);
-        current->list[factor]->value = 1 - current->list[factor]->value;
-        if (CList_contains(rowSet, current)) {
-            current->list[factor]->value = 1 - current->list[factor]->value;
+        tmpList = copy_pairList(current);
+        tmpList->list[factor]->value = 1 - tmpList->list[factor]->value;
+        if (CList_contains(rowSet, tmpList)) {
+            free(tmpList);
             return 1;
         }
-        current->list[factor]->value = 1 - current->list[factor]->value;
-        CList_add(rowSet, tempList);
+        tmpList->list[factor]->value = 1 - tmpList->list[factor]->value;
+        CList_add(rowSet, tmpList);
+        current = current->next;
     }
     return 0;
 }

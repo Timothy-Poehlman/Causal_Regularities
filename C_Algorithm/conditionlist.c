@@ -6,7 +6,7 @@
 ConditionList make_CList() {
     ConditionList new_CList = malloc(sizeof(condition_list));
     new_CList->size = 0;
-    new_CList->list = malloc(sizeof(pair_list));
+    new_CList->list = NULL;
     return new_CList;
 }
 
