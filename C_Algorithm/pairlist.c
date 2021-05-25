@@ -1,5 +1,5 @@
-#include "pairlist.h"
 #include <stdlib.h>
+#include "pairlist.h"
 
 Pair make_pair(int index, int value)
 {
@@ -12,8 +12,9 @@ Pair make_pair(int index, int value)
 PairList make_pairList()
 {
     PairList pairList = malloc(sizeof(pair_list));
-    pairList->list = malloc(0);
-    pairList->size = 0;
+    pairList->list = malloc(sizeof(Pair));
+    pairList->size = 1;
+    pairList->location = 0;
     return pairList;
 }
 
@@ -27,6 +28,24 @@ PairList copy_pairList(PairList p) {
     output->size = p->size;
     output->next = NULL;
     return output;
+}
+
+/* appends p2 to the end of p1 */
+void pairList_append(PairList p1, Pair p2)
+{
+    if(p1->location>=p1->size)
+    {
+        Pair* tmp = malloc((p1->size)*2 * sizeof(Pair));
+        for(int i=0;i<p1->size;i++)
+        {
+            tmp[i] = p1->list[i];
+        }
+        free(p1->list);
+        p1->list = tmp;
+        p1->size = p1->size * 2;
+    }
+    p1->list[p1->location] = p2;
+    p1->location = p1->location + 1;
 }
 
 int pairs_equal(Pair p1, Pair p2)

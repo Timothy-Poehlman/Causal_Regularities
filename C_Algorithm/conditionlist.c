@@ -1,5 +1,5 @@
-#include "conditionlist.h"
 #include <stdlib.h>
+#include "conditionlist.h"
 
 
 
@@ -28,10 +28,14 @@ void CList_free(ConditionList c) {
 }
 
 int CList_contains(ConditionList c, PairList p) {
-    for (int index = 0; index < c->size; index++) {
-        if (c->list[index] && pairListsEqual(c->list[index], p)) {
+    PairList tmpList = c->list;
+    while(tmpList)
+    {
+        if(pairListsEqual(tmpList,p))
+        {
             return 1;
         }
+        tmpList = tmpList->next;
     }
     return 0;
 }

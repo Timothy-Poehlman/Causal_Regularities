@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pairlist.h"
 #include "conditionlist.h"
 
 ConditionList prepare_table(FILE* input_table, int rows, int cols);
@@ -27,14 +26,18 @@ int main(int argc, char* argv[])
 
     ConditionList table = prepare_table(stream, rows, cols);
 
-    //for (int i = 0; i < rows;i++) {
-    //    for (int j = 0; j < cols;j++) {
-    //        printf("%d", table[i][j]->value);
-    //    }
-    //    printf("\n");
-    //}
+    PairList tmpTable = table->list;
+    while(tmpTable)
+    {
+        for(int e=0; e<tmpTable->location;e++)
+        {
+            printf("%d",tmpTable->list[e]->value);
+        }
+        printf("\n");
+        tmpTable = tmpTable->next;
+    }
 
-    //potential_effects = step0(table,NegFactorSet, rows, cols);
+    potential_effects = step0(table,NegFactorSet, rows, cols);
 
     //--DEBUG
     // printf("Potential Effects: [");

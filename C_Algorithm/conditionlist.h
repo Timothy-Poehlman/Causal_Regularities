@@ -1,5 +1,4 @@
 #include "pairlist.h"
-
 typedef struct condition_list *ConditionList;
 struct condition_list
 {

@@ -8,7 +8,8 @@ typedef struct pair_list *PairList;
 struct pair_list
 {
     Pair* list;
-    int size;
+    int size; //allocated size
+    int location; //end of list
     PairList next;
 } pair_list;
 

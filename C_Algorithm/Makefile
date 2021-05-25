@@ -11,4 +11,6 @@ $(PROG): $(OBJS)
 clean:
 	rm -f $(OBJS) causal.out
 
-Main.o: pairlist.h Main.c
+Main.o: pairlist.h Main.c conditionlist.h
+
+conditionlist.o: pairlist.h
