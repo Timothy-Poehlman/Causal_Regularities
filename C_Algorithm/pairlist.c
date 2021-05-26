@@ -10,6 +10,13 @@ Pair make_pair(int index, int value)
     return new_pair;
 }
 
+Pair copy_pair(Pair p) {
+    Pair output = malloc(sizeof(pair_desc));
+    output->index = p->index;
+    output->value = p->value;
+    return output;
+}
+
 PairList make_pairList()
 {
     PairList pairList = malloc(sizeof(pair_list));
@@ -21,12 +28,12 @@ PairList make_pairList()
 
 PairList copy_pairList(PairList p) {
     PairList output = malloc(sizeof(pair_list));
-    Pair* templist = malloc(sizeof(Pair) * p->size);
-    for (int i = 0; i < p->size;i++) {
-        templist[i] = p->list[i];
+    Pair* templist = malloc(sizeof(Pair) * p->location);
+    for (int i = 0; i < p->location;i++) {
+        templist[i] = copy_pair(p->list[i]);
     }
     output->list = templist;
-    output->size = p->size;
+    output->size = p->location;
     output->location = p->location;
     output->next = NULL;
     return output;

@@ -75,14 +75,17 @@ int check_sufficient(PairList condition,ConditionList table,int effect)
     int foundOne = 0;
     int isMatch = 1;
     PairList tmpList = table->list;
+
+    Pair pairLoc;
     
     while(tmpList)
     {
         isMatch = 1;
         for(int index=0;index<condition->location;index++)
         {
+            pairLoc = condition->list[index];
             //given pair does NOT match same index in coincidence
-            if(condition->list[index]->value != tmpList->list[index]->value)
+            if(pairLoc->value != tmpList->list[pairLoc->index]->value)
             {
                 isMatch = 0;
                 break;

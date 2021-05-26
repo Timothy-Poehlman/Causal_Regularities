@@ -20,16 +20,7 @@ int main(int argc, char* argv[])
 
     ConditionList table = prepare_table(stream);
 
-    PairList tmpTable = table->list;
-    while(tmpTable)
-    {
-        for(int e=0; e<tmpTable->location;e++)
-        {
-            printf("%d",tmpTable->list[e]->value);
-        }
-        printf("\n");
-        tmpTable = tmpTable->next;
-    }
+    CList_print(table);
 
     potential_effects = step0(table,NegFactorSet,&numPotEffects);
 
@@ -44,18 +35,24 @@ int main(int argc, char* argv[])
     printf("]\n");
     //--
 
+    CList_print(table);
+
     //steps 2->5
     for(int effect = 0; effect<numPotEffects; effect++)
     {
-       printf("_________________Effect Index:%d____________________\n",effect);
+       printf("_________________Effect Index:%d____________________\n",potential_effects[effect]);
        
-       printf("ConditionList_________________");
+       printf("ConditionList_________________\n");
        conditionList = step2(table,potential_effects[effect]);
-    //    for(int pairList=0;pairList<maxNumConditions;pairList++)
-    //    {
-    //        printf(pairList);
-    //    }
-    //    maxNumConditions = 0;
+       
+       //Debug
+       PairList currentList = conditionList->list;
+       while (currentList) {
+           printPairList(currentList);
+           printf("\n");
+           currentList = currentList->next;
+       }
+       //Debug
        printf("end ConditionList_______________________\n");
        free(conditionList);
     }
@@ -84,7 +81,7 @@ int* step0(ConditionList table, int* NegFactorSet, int* numPotEffects)
             (*numPotEffects)++;
         }
     }
-    //realloc(W,maxPotEffects*sizeof(int));
+    W = realloc(W,(*numPotEffects)*sizeof(int));
     return W;
 }
 

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "conditionlist.h"
 
 
@@ -38,4 +39,13 @@ int CList_contains(ConditionList c, PairList p) {
         tmpList = tmpList->next;
     }
     return 0;
+}
+
+void CList_print(ConditionList c) {
+    PairList current = c-> list;
+    while (current) {
+        printPairList(current);
+        printf("\n");
+        current = current->next;
+    }
 }
