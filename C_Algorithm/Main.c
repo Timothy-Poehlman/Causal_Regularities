@@ -35,8 +35,6 @@ int main(int argc, char* argv[])
     printf("]\n");
     //--
 
-    CList_print(table);
-
     //steps 2->5
     for(int effect = 0; effect<numPotEffects; effect++)
     {
@@ -115,3 +113,39 @@ ConditionList step2(ConditionList table, int effect)
     }
     return conditionList;
 }
+
+
+
+void step3(ConditionList inputConditions, ConditionList table, int effect) {
+    
+}
+
+/*
+maint_table: the original table of values
+effect : the factor being examined
+conditionList : a list of all sufficient conditions
+
+minimally_sufficient_conditions : a set of all minimally sufficient conditions
+'''
+def step3(conditionList, main_table, effect) :
+    minimally_sufficient_conditions = []
+
+    for condition in conditionList :
+        prm_list = list(permutations(range(0, len(condition))))
+        for prm in prm_list :
+            #create pairlist of
+            modif_condition = []
+            for index in prm :
+                modif_condition.append(condition[index])
+            tmp_list = copy.deepcopy(modif_condition)
+            for factor in tmp_list :
+                #remove
+                modif_condition.remove(factor)
+                #is sufficient ?
+                if not check_sufficient(modif_condition, table, effect) :
+                    modif_condition.append(factor)
+            if not pairListIn(minimally_sufficient_conditions, modif_condition) :
+                minimally_sufficient_conditions.append(modif_condition)
+
+    return minimally_sufficient_conditions
+*/
