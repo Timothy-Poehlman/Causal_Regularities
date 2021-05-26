@@ -81,7 +81,7 @@ int* step0(ConditionList table, int* NegFactorSet, int* numPotEffects)
         {
             W[W_index] = i;
             W_index++;
-            *numPotEffects++;
+            (*numPotEffects)++;
         }
     }
     //realloc(W,maxPotEffects*sizeof(int));
