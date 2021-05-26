@@ -35,7 +35,6 @@ ConditionList prepare_table(FILE* input_table)
 int rowDuplicity(ConditionList table,int factor)
 {
     ConditionList rowSet = make_CList();
-    // memset(rowSet, 0, sizeof(*rowSet));
     //loop through every row in table
 
     PairList current = table->list;
@@ -66,4 +65,38 @@ int intArrayIn(int val, int* array)
         }
     }
     return 0;
+}
+
+/*
+ * Checks if a given list of pairs (a coincidence) is sufficient
+ */
+int check_sufficient(PairList condition,ConditionList table,int effect)
+{
+    int foundOne = 0;
+    int isMatch = 1;
+    PairList tmpList = table->list;
+    
+    while(tmpList)
+    {
+        isMatch = 1;
+        for(int index=0;index<condition->location;index++)
+        {
+            //given pair does NOT match same index in coincidence
+            if(condition->list[index]->value != tmpList->list[index]->value)
+            {
+                isMatch = 0;
+                break;
+            }
+        }
+        if(isMatch)
+        {
+            foundOne = 1;
+            if(tmpList->list[effect]->value == 0)
+            {
+                return 0;
+            }
+        }
+        tmpList = tmpList->next;
+    }
+    return foundOne;
 }
