@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 #include "conditionlist.h"
 #include "helper.h"
 
 int* step0(ConditionList main_table, int* NegFactorSet, int* numPotEffects);
 ConditionList step2(ConditionList table, int effect);
+void step3(ConditionList inputConditions, ConditionList table, int effect);
 
 int numThreads = 8;
 
@@ -55,6 +55,11 @@ int main(int argc, char* argv[])
        }
        //Debug
        printf("end ConditionList_______________________\n");
+
+       step3(conditionList, table, potential_effects[effect]);
+
+
+
        free(conditionList);
     }
     free(potential_effects);
@@ -122,19 +127,21 @@ ConditionList step2(ConditionList table, int effect)
 void step3(ConditionList inputConditions, ConditionList table, int effect) {
     ConditionList minimally_sufficient_conditions = make_CList();
 
-    Queue* queue = createQueue();
+    Queue* queue = createQueue(numThreads);
 
     pthread_t threadIds[numThreads];
 
     for (int i = 0; i < numThreads;i++) {
-
-        pthread_create(&threadIds[i], NULL, sufficientThread, queue)
+        //pthread_create(&threadIds[i], NULL, sufficientThread, queue)
     }
 
     PairList current = inputConditions->list;
     while (current) {
-
+        permutations(current, 0, current->location-1, queue);
         current = current->next;
+    }
+    for (int i = 0; i < numThreads; i++) {
+        //pthread_join(threadIds[i], NULL);
     }
 }
 

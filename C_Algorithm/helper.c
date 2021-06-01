@@ -103,3 +103,23 @@ int check_sufficient(PairList condition,ConditionList table,int effect)
     }
     return foundOne;
 }
+
+void permutations(PairList input, int l, int r, Queue* outputQueue) {
+    if (l==r) {
+        //output
+    }
+    else {
+        for (int i = l; i <= r;i++) {
+            swap(input->list + l, input->list + i);
+            permutations(input, l + 1, r, outputQueue);
+            swap(input->list + l, input->list + i);
+        }
+    }
+}
+
+void swap(Pair* a, Pair* b) {
+    Pair temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}

@@ -1,17 +1,21 @@
+#include <stdlib.h>
+#include <pthread.h>
+#include "queue.h"
+
 // function to create a queue
 // of given capacity.
 // It initializes size of queue as 0
 struct Queue* createQueue(unsigned capacity)
 {
-    struct Queue* queue = (struct Queue*)malloc(
-        sizeof(struct Queue));
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
     queue->capacity = capacity;
     queue->front = queue->size = 0;
  
     // This is important, see the enqueue
     queue->rear = capacity - 1;
-    queue->array = (int*)malloc(
-        queue->capacity * sizeof(int));
+    queue->array = (PairList*)malloc(queue->capacity * sizeof(PairList));
+    queue->addCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
+    queue->removeCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     return queue;
 }
  
@@ -30,42 +34,58 @@ int isEmpty(struct Queue* queue)
  
 // Function to add an item to the queue.
 // It changes rear and size
-void enqueue(struct Queue* queue, int item)
+void enqueue(struct Queue* queue, PairList item)
 {
-    if (isFull(queue))
-        return;
-    queue->rear = (queue->rear + 1)
-                  % queue->capacity;
-    queue->array[queue->rear] = item;
-    queue->size = queue->size + 1;
-    printf("%d enqueued to queue\n", item);
+    pthread_mutex_lock(&(queue->lock));
+
+    while (1) {
+        if (isFull(queue))
+            pthread_cond_wait(&(queue->addCond), &(queue->lock));
+        else {
+            queue->rear = (queue->rear + 1) % queue->capacity;
+            queue->array[queue->rear] = item;
+            queue->size = queue->size + 1;
+
+            pthread_cond_broadcast(&(queue->removeCond));
+            pthread_mutex_unlock(&(queue->lock));
+            break;
+        }
+    }
 }
  
 // Function to remove an item from queue.
 // It changes front and size
-int dequeue(struct Queue* queue)
+PairList dequeue(struct Queue* queue)
 {
-    if (isEmpty(queue))
-        return INT_MIN;
-    int item = queue->array[queue->front];
-    queue->front = (queue->front + 1)
-                   % queue->capacity;
-    queue->size = queue->size - 1;
-    return item;
+    pthread_mutex_lock(&(queue->lock));
+
+    while (1) {
+        if (isEmpty(queue))
+            pthread_cond_wait(&(queue->removeCond), &(queue->lock));
+        else {
+            PairList item = queue->array[queue->front];
+            queue->front = (queue->front + 1) % queue->capacity;
+            queue->size = queue->size - 1;
+
+            pthread_cond_broadcast(&(queue->addCond));
+            pthread_mutex_unlock(&(queue->lock));
+            return item;
+        }
+    }
 }
  
 // Function to get front of queue
-int front(struct Queue* queue)
+PairList front(struct Queue* queue)
 {
     if (isEmpty(queue))
-        return INT_MIN;
+        return NULL;
     return queue->array[queue->front];
 }
  
 // Function to get rear of queue
-int rear(struct Queue* queue)
+PairList rear(struct Queue* queue)
 {
     if (isEmpty(queue))
-        return INT_MIN;
+        return NULL;
     return queue->array[queue->rear];
 }
