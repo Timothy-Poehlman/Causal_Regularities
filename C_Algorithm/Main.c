@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 #include "conditionlist.h"
 #include "helper.h"
 
 int* step0(ConditionList main_table, int* NegFactorSet, int* numPotEffects);
 ConditionList step2(ConditionList table, int effect);
+
+int numThreads = 8;
 
 int main(int argc, char* argv[])
 {
@@ -117,7 +120,22 @@ ConditionList step2(ConditionList table, int effect)
 
 
 void step3(ConditionList inputConditions, ConditionList table, int effect) {
-    
+    ConditionList minimally_sufficient_conditions = make_CList();
+
+    Queue* queue = createQueue();
+
+    pthread_t threadIds[numThreads];
+
+    for (int i = 0; i < numThreads;i++) {
+
+        pthread_create(&threadIds[i], NULL, sufficientThread, queue)
+    }
+
+    PairList current = inputConditions->list;
+    while (current) {
+
+        current = current->next;
+    }
 }
 
 /*
