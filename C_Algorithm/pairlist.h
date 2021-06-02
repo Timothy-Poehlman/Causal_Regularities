@@ -24,4 +24,5 @@ int pairListsEqual(PairList pairList1,PairList pairList2);
 void pairList_free(PairList l);
 void pairList_append(PairList list, Pair p);
 void printPairList(PairList pl);
+Pair pairList_pop(PairList p);
 #endif

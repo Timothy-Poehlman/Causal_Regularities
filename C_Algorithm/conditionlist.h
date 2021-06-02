@@ -7,6 +7,7 @@ struct condition_list
 {
     PairList list;
     int size;
+    pthread_mutex_t lock;
 } condition_list;
 
 ConditionList make_CList();

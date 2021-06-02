@@ -107,6 +107,8 @@ int check_sufficient(PairList condition,ConditionList table,int effect)
 void permutations(PairList input, int l, int r, Queue* outputQueue) {
     if (l==r) {
         //output
+        PairList copy = copy_pairList(input);
+        enqueue(outputQueue,copy);
     }
     else {
         for (int i = l; i <= r;i++) {

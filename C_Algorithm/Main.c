@@ -130,9 +130,10 @@ void step3(ConditionList inputConditions, ConditionList table, int effect) {
     Queue* queue = createQueue(numThreads);
 
     pthread_t threadIds[numThreads];
+    threadInfo* info = infoCreate(queue,minimally_sufficient_conditions,table,effect);
 
     for (int i = 0; i < numThreads;i++) {
-        //pthread_create(&threadIds[i], NULL, sufficientThread, queue)
+        pthread_create(&threadIds[i], NULL, sufficientThread, info)
     }
 
     PairList current = inputConditions->list;
@@ -141,7 +142,7 @@ void step3(ConditionList inputConditions, ConditionList table, int effect) {
         current = current->next;
     }
     for (int i = 0; i < numThreads; i++) {
-        //pthread_join(threadIds[i], NULL);
+        pthread_join(threadIds[i], NULL);
     }
 }
 

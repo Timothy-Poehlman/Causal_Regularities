@@ -49,3 +49,12 @@ void CList_print(ConditionList c) {
         current = current->next;
     }
 }
+
+void t_setInsert(ConditionList cList, PairList pList) {
+    
+    pthread_mutex_lock(&(cList->lock));
+    if(!CList_contains(cList,pList)){
+        CList_add(cList,pList);
+    }
+    pthread_mutex_unlock(&(cList->lock));
+}

@@ -94,16 +94,13 @@ void printPairList(PairList pl)
     }
 }
 
-// def pairListListsEqual(Pair** pairListList1, Pair** pairListList2):
-//     if len(pairListList1) == len(pairListList2):
-//         for pairList in pairListList1:
-//             if not pairListIn(pairListList2, pairList):
-//                 return False
-//         return True
-//     return False
+Pair pairList_pop(PairList p){
+    if(p->location = 0){return NULL;}
 
-// def pairListListIn(conditionList, pairListList):
-//     for elem in conditionList:
-//         if pairListListsEqual(elem, pairListList):
-//             return True
-//     return False
+    Pair output = p->list[0];
+    for(int i=1;i<p->location;i++){
+        p->list[i-1] = p->list[i];
+    }
+    location--;
+    return output;
+}
