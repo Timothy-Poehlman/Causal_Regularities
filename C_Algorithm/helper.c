@@ -125,3 +125,32 @@ void swap(Pair* a, Pair* b) {
     *a = *b;
     *b = temp;
 }
+
+void setFlags(char* flags)
+{
+    int len = strlen(flags);
+    for(int i=1;i<len;i++)
+    {
+        switch(flags[i])
+        {
+            case "d":
+                debug = 1;
+                break;
+            default:
+        }
+    }
+}
+
+FILE* setStream(char* arg)
+{
+    char* subString = subString(arg,strlen(arg)-1);
+    FILE* stream = fopen(subString+1, "r");
+}
+
+char* subString(char* str, int len) 
+{
+   char *new = malloc(sizeof(char)*len+1);
+   strncpy(new, str, len);
+   new[len] = '\0';
+   return new;
+}

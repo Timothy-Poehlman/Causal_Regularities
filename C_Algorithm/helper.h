@@ -10,5 +10,7 @@ int intArrayIn(int val, int* array);
 int check_sufficient(PairList condition,ConditionList table,int effect);
 void permutations(PairList input, int l, int r, Queue* outputQueue);
 void swap(Pair* a, Pair* b);
+void setFlags(char* flags);
+void setStream(char* arg);
 
 #endif

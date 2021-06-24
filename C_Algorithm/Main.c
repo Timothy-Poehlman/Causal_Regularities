@@ -4,144 +4,170 @@
 #include "conditionlist.h"
 #include "helper.h"
 
-int* step0(ConditionList main_table, int* NegFactorSet, int* numPotEffects);
+int *step0(ConditionList main_table, int *NegFactorSet, int *numPotEffects);
 ConditionList step2(ConditionList table, int effect);
 void step3(ConditionList inputConditions, ConditionList table, int effect);
 
+int debug = 0;
 int numThreads = 8;
 
-int main(int argc, char* argv[])
+/* MAIN
+ * This is the general structure for analyzing a given table
+ */
+int main(int argc, char *argv[])
 {
     int NegFactorSet[0];
-    int* potential_effects;
+    int *potential_effects;
     int numPotEffects = 0;
     ConditionList conditionList;
 
-    //read csv
-    FILE* stream = fopen("TESTINPUT.csv", "r");
+    //read csv - if given a csv in "NAME.csv", it will override this
+    FILE *stream = fopen("TESTINPUT.csv", "r");
 
+    //check arguments
+    for (int i = 0; i < argc; i++)
+    {
+        char *arg = argv[i] switch (arg[0])
+        {
+        case "-":
+            setFlags(arg);
+            break;
+        case "\"":
+            stream = setStream(arg);
+        default:
+        }
+    }
 
     ConditionList table = prepare_table(stream);
 
     CList_print(table);
 
-    potential_effects = step0(table,NegFactorSet,&numPotEffects);
+    potential_effects = step0(table, NegFactorSet, &numPotEffects);
 
     //--DEBUG
-    printf("Potential Effects: [");
-    for(int i=0;i<sizeof(potential_effects)/sizeof(int);i++)
+    if (debug)
     {
-        if(i!=0)
-        {printf(",");}
-        printf("%d",potential_effects[i]);
+        printf("Potential Effects: [");
+        for (int i = 0; i < sizeof(potential_effects) / sizeof(int); i++)
+        {
+            if (i != 0)
+            {
+                printf(",");
+            }
+            printf("%d", potential_effects[i]);
+        }
+        printf("]\n");
     }
-    printf("]\n");
     //--
 
     //steps 2->5
-    for(int effect = 0; effect<numPotEffects; effect++)
+    for (int effect = 0; effect < numPotEffects; effect++)
     {
-       printf("_________________Effect Index:%d____________________\n",potential_effects[effect]);
-       
-       printf("ConditionList_________________\n");
-       conditionList = step2(table,potential_effects[effect]);
-       
-       //Debug
-       PairList currentList = conditionList->list;
-       while (currentList) {
-           printPairList(currentList);
-           printf("\n");
-           currentList = currentList->next;
-       }
-       //Debug
-       printf("end ConditionList_______________________\n");
+        printf("_________________Effect Index:%d____________________\n", potential_effects[effect]);
 
-       step3(conditionList, table, potential_effects[effect]);
+        printf("ConditionList_________________\n");
+        conditionList = step2(table, potential_effects[effect]);
 
+        //Debug
+        if (debug)
+        {
+            PairList currentList = conditionList->list;
+            while (currentList)
+            {
+                printPairList(currentList);
+                printf("\n");
+                currentList = currentList->next;
+            }
+        }
+        //Debug
+        printf("end ConditionList_______________________\n");
 
+        step3(conditionList, table, potential_effects[effect]);
 
-       free(conditionList);
+        free(conditionList);
     }
     free(potential_effects);
-
 }
 
 /* STEP 0
- * FactorTable is a hashtable/dictionary of all factors, factorA -> index | key -> value
- * For everything in W, we will have to test this
- * Over every factor, we are collecting the set of factors that are possible effects, this set is W
- * B: set of all factors, table: C
+ * table: Main table of all coincidences
+ * NegFactorSet: int array of all negative factors, this should be empty
+ *               as they should be removed before passing it in
  */
-int* step0(ConditionList table, int* NegFactorSet, int* numPotEffects)
+int *step0(ConditionList table, int *NegFactorSet, int *numPotEffects)
 {
     int cols = table->list->location;
-    int* W = malloc(sizeof(int)*cols);
+    int *W = malloc(sizeof(int) * cols);
     int W_index = 0;
-    for (int i=0;i<cols;i++)
+    for (int i = 0; i < cols; i++)
     {
         printf("checking index %d\n", i);
-        if(!(rowDuplicity(table, i) || intArrayIn(i, NegFactorSet)))
+        if (!(rowDuplicity(table, i) || intArrayIn(i, NegFactorSet)))
         {
             W[W_index] = i;
             W_index++;
             (*numPotEffects)++;
         }
     }
-    W = realloc(W,(*numPotEffects)*sizeof(int));
+    W = realloc(W, (*numPotEffects) * sizeof(int));
     return W;
 }
 
-
 /* STEP 2
-    maint_table: the original table of values
-    effect: the factor being examined
-
-    conditionList: a list of all sufficient conditions
+    table: Main table of all coincidences
+    effect: The effect that is being analyzed
 */
 ConditionList step2(ConditionList table, int effect)
 {
     ConditionList conditionList = make_CList();
     PairList tmpPList = table->list;
     PairList condition;
-    while(tmpPList)
+    while (tmpPList)
     {
         condition = make_pairList();
-        for(int index=0; index<tmpPList->location; index++)
+        for (int index = 0; index < tmpPList->location; index++)
         {
-            if(index != effect)
+            if (index != effect)
             {
-                pairList_append(condition,make_pair(index,tmpPList->list[index]->value));
+                pairList_append(condition, make_pair(index, tmpPList->list[index]->value));
             }
         }
-        if(check_sufficient(condition, table, effect))
+        if (check_sufficient(condition, table, effect))
         {
-            CList_add(conditionList,condition);
+            CList_add(conditionList, condition);
         }
         tmpPList = tmpPList->next;
     }
     return conditionList;
 }
 
-
-
-void step3(ConditionList inputConditions, ConditionList table, int effect) {
+/* STEP 3
+ * inputConditions: ConditionList produced from [STEP 2]
+ * table: Main table of all coincidences
+ * effect: The effect that is being analyzed
+ */
+void step3(ConditionList inputConditions, ConditionList table, int effect)
+{
     ConditionList minimally_sufficient_conditions = make_CList();
 
-    Queue* queue = createQueue(numThreads);
+    Queue *queue = createQueue(numThreads);
 
     pthread_t threadIds[numThreads];
-    threadInfo* info = infoCreate(queue,minimally_sufficient_conditions,table,effect);
+    threadInfo *info = infoCreate(queue, minimally_sufficient_conditions, table, effect);
 
-    for (int i = 0; i < numThreads;i++) {
+    for (int i = 0; i < numThreads; i++)
+    {
         pthread_create(&threadIds[i], NULL, sufficientThread, info)
     }
 
     PairList current = inputConditions->list;
-    while (current) {
-        permutations(current, 0, current->location-1, queue);
+    while (current)
+    {
+        permutations(current, 0, current->location - 1, queue);
         current = current->next;
     }
-    for (int i = 0; i < numThreads; i++) {
+    for (int i = 0; i < numThreads; i++)
+    {
         pthread_join(threadIds[i], NULL);
     }
 }
