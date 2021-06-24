@@ -11,6 +11,7 @@ int check_sufficient(PairList condition,ConditionList table,int effect);
 void permutations(PairList input, int l, int r, Queue* outputQueue);
 void swap(Pair* a, Pair* b);
 void setFlags(char* flags);
-void setStream(char* arg);
+FILE setStream(char* arg);
+char* subString(char* str, int len);
 
 #endif
