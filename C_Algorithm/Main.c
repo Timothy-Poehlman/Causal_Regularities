@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     int *potential_effects;
     int numPotEffects = 0;
     ConditionList conditionList;
+    Queue *sufficientSet;
 
     //read csv - if given a csv in "NAME.csv", it will override this
     FILE *stream = fopen("TESTINPUT.csv", "r");
@@ -82,7 +83,7 @@ int main(int argc, char *argv[])
         //Debug
         printf("end ConditionList_______________________\n");
 
-        step3(conditionList, table, potential_effects[effect]);
+        sufficientSet = step3(conditionList, table, potential_effects[effect]);
 
         free(conditionList);
     }
@@ -155,21 +156,24 @@ void step3(ConditionList inputConditions, ConditionList table, int effect)
     pthread_t threadIds[numThreads];
     threadInfo *info = infoCreate(queue, minimally_sufficient_conditions, table, effect);
 
-    for (int i = 0; i < numThreads; i++)
-    {
-        pthread_create(&threadIds[i], NULL, sufficientThread, info)
-    }
-
+    // Loop through each condition, check all permutations, add them if they pass to [queue]
     PairList current = inputConditions->list;
     while (current)
     {
         permutations(current, 0, current->location - 1, queue);
         current = current->next;
     }
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        pthread_create(&threadIds[i], NULL, sufficientThread, info)
+    }
     for (int i = 0; i < numThreads; i++)
     {
         pthread_join(threadIds[i], NULL);
     }
+
+    return queue;
 }
 
 /*

@@ -104,6 +104,13 @@ int check_sufficient(PairList condition,ConditionList table,int effect)
     return foundOne;
 }
 
+/* Description: recursively checks each permutation of a given PairList
+ * Parameters:
+ *              input: a PairList that the permutations will be checked from
+ *              l: left bound
+ *              r: right bound
+ *              outputQueue: The queue that the solutions should be put into
+ */
 void permutations(PairList input, int l, int r, Queue* outputQueue) {
     if (l==r) {
         //output
