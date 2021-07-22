@@ -7,12 +7,13 @@ void sufficientThread(void* data){
     ConditionList condList = info.c;
     ConditionList table = info.t;
     int effect = info.e;
+    int flag = (*int)info.f;
 
     Pair removedPair = NULL;
     PairList permutation = NULL;
     while(1){
         //grab from quuee
-        permutation = dequeue(permQ);
+        permutation = dequeue(permQ, flag);
         //perform on perm
         for(int i=0;i<permutation->location;i++){
             //remove
@@ -27,11 +28,12 @@ void sufficientThread(void* data){
     }
 }
 
-threadInfo *infoCreate(Queue* q, ConditionList c, ConditionList t, int e){
+threadInfo *infoCreate(Queue* q, ConditionList c, ConditionList t, int e, int* f){
     threadInfo new_threadInfo = malloc(sizeof(threadInfo));
     new_threadInfo.q = q;
     new_threadInfo.c = c;
     new_threadInfo.t = t;
     new_threadInfo.e = e;
+    new_threadInfo.f = f;
     return &new_threadInfo;
 }

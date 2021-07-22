@@ -153,8 +153,15 @@ void step3(ConditionList inputConditions, ConditionList table, int effect)
 
     Queue *queue = createQueue(numThreads);
 
+    int isDone = 0;
+
     pthread_t threadIds[numThreads];
-    threadInfo *info = infoCreate(queue, minimally_sufficient_conditions, table, effect);
+    threadInfo *info = infoCreate(queue, minimally_sufficient_conditions, table, effect, &isDone);
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        pthread_create(&threadIds[i], NULL, sufficientThread, info)
+    }
 
     // Loop through each condition, check all permutations, add them if they pass to [queue]
     PairList current = inputConditions->list;
@@ -164,10 +171,9 @@ void step3(ConditionList inputConditions, ConditionList table, int effect)
         current = current->next;
     }
 
-    for (int i = 0; i < numThreads; i++)
-    {
-        pthread_create(&threadIds[i], NULL, sufficientThread, info)
-    }
+    // Set flag to notify we are done creating permutations
+    isDone = 1;
+
     for (int i = 0; i < numThreads; i++)
     {
         pthread_join(threadIds[i], NULL);

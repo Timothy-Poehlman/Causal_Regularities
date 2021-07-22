@@ -6,6 +6,7 @@ typedef struct threadInfo {
     ConditionList c;
     ConditionList t;
     int e;
+    int* f;
 }threadInfo;
 
 #endif
