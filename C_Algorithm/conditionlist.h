@@ -15,4 +15,5 @@ void CList_add(ConditionList c, PairList p);
 void CList_free(ConditionList c);
 int CList_contains(ConditionList c, PairList p);
 void CList_print(ConditionList c);
+void t_setInsert(ConditionList cList, PairList pList);
 #endif

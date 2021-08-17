@@ -140,24 +140,24 @@ void setFlags(char* flags)
     {
         switch(flags[i])
         {
-            case "d":
-                debug = 1;
+            case 'd':
+                //debug = 1; What is this supposed to do? Just found it sitting there -Forest
                 break;
-            default:
         }
     }
 }
 
-FILE* setStream(char* arg)
+char* subString(char* str, int len)
 {
-    char* subString = subString(arg,strlen(arg)-1);
-    FILE* stream = fopen(subString+1, "r");
+    char* new = malloc(sizeof(char) * len + 1);
+    strncpy(new, str, len);
+    new[len] = '\0';
+    return new;
 }
 
-char* subString(char* str, int len) 
+FILE* setStream(char* arg)
 {
-   char *new = malloc(sizeof(char)*len+1);
-   strncpy(new, str, len);
-   new[len] = '\0';
-   return new;
+    char* sString = subString(arg,strlen(arg)-1);
+    FILE* stream = fopen(sString+1, "r");
+    return stream;
 }

@@ -1,5 +1,8 @@
 /* Taken from https://www.geeksforgeeks.org/queue-set-1introduction-and-array-implementation/ */
 
+
+#ifndef QUEUE
+#define QUEUE
 // C program for array implementation of queue
 #include <limits.h>
 #include <stdio.h>
@@ -25,7 +28,7 @@ PairList front(struct Queue* queue);
 
 // Function to remove an item from queue.
 // It changes front and size
-PairList dequeue(struct Queue* queue);
+PairList dequeue(struct Queue* queue, int flag);
 
 // Function to add an item to the queue.
 // It changes rear and size
@@ -42,3 +45,5 @@ int isFull(struct Queue* queue);
 // of given capacity.
 // It initializes size of queue as 0
 struct Queue* createQueue(unsigned capacity);
+
+#endif

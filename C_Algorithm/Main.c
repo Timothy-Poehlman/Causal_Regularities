@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 #include "conditionlist.h"
 #include "helper.h"
+#include "thread.h"
 
 int *step0(ConditionList main_table, int *NegFactorSet, int *numPotEffects);
 ConditionList step2(ConditionList table, int effect);
-void step3(ConditionList inputConditions, ConditionList table, int effect);
+Queue* step3(ConditionList inputConditions, ConditionList table, int effect);
 
-int debug = 0;
+int debug = 1;
 int numThreads = 8;
 
 /* MAIN
@@ -26,18 +28,20 @@ int main(int argc, char *argv[])
     FILE *stream = fopen("TESTINPUT.csv", "r");
 
     //check arguments
+    /*  setStream causing issues
     for (int i = 0; i < argc; i++)
     {
-        char *arg = argv[i] switch (arg[0])
+        char* arg = argv[i];
+        switch (arg[0])
         {
-        case "-":
+        case '-':
             setFlags(arg);
             break;
-        case "\"":
+        case '\"':
             stream = setStream(arg);
-        default:
         }
     }
+    */
 
     ConditionList table = prepare_table(stream);
 
@@ -66,12 +70,12 @@ int main(int argc, char *argv[])
     {
         printf("_________________Effect Index:%d____________________\n", potential_effects[effect]);
 
-        printf("ConditionList_________________\n");
         conditionList = step2(table, potential_effects[effect]);
 
         //Debug
         if (debug)
         {
+            printf("ConditionList_________________\n");
             PairList currentList = conditionList->list;
             while (currentList)
             {
@@ -79,9 +83,8 @@ int main(int argc, char *argv[])
                 printf("\n");
                 currentList = currentList->next;
             }
+            printf("end ConditionList_______________________\n");
         }
-        //Debug
-        printf("end ConditionList_______________________\n");
 
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
 
@@ -147,7 +150,7 @@ ConditionList step2(ConditionList table, int effect)
  * table: Main table of all coincidences
  * effect: The effect that is being analyzed
  */
-void step3(ConditionList inputConditions, ConditionList table, int effect)
+Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
 {
     ConditionList minimally_sufficient_conditions = make_CList();
 
@@ -160,7 +163,7 @@ void step3(ConditionList inputConditions, ConditionList table, int effect)
 
     for (int i = 0; i < numThreads; i++)
     {
-        pthread_create(&threadIds[i], NULL, sufficientThread, info)
+        pthread_create(&threadIds[i], NULL, &sufficientThread, info);
     }
 
     // Loop through each condition, check all permutations, add them if they pass to [queue]

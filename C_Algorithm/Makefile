@@ -1,17 +1,17 @@
 PROG = causal
-OBJS = Main.o pairlist.o conditionlist.o helper.o queue.o
+OBJS = Main.o pairlist.o conditionlist.o helper.o queue.o thread.o
 CC = gcc
 CFLAGS = -g -Wall
 
 all: $(PROG)
 
 $(PROG): $(OBJS)
-	$(CC) -o $(PROG) $(CFLAGS) $(OBJS)
+	$(CC) -pthread -o $(PROG) $(CFLAGS) $(OBJS)
 
 clean:
 	rm -f $(OBJS) causal.out
 
-Main.o: pairlist.h Main.c conditionlist.h helper.h queue.h
+Main.o: Main.c conditionlist.h helper.h thread.h
 
 helper.o: conditionlist.h queue.h
 

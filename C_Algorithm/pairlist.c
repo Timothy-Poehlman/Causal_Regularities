@@ -95,12 +95,12 @@ void printPairList(PairList pl)
 }
 
 Pair pairList_pop(PairList p){
-    if(p->location = 0){return NULL;}
+    if(p->location == 0){return NULL;}
 
     Pair output = p->list[0];
     for(int i=1;i<p->location;i++){
         p->list[i-1] = p->list[i];
     }
-    location--;
+    p->location--;
     return output;
 }

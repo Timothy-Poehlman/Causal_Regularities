@@ -1,13 +1,16 @@
 #include <pthread.h>
+#include "thread.h"
+#include "conditionlist.h"
+#include "helper.h"
 
 /* Main thread for Sufficiency */
-void sufficientThread(void* data){
+void* sufficientThread(void* data){
     threadInfo* info = (threadInfo*)data;
-    Queue* permQ = info.q;
-    ConditionList condList = info.c;
-    ConditionList table = info.t;
-    int effect = info.e;
-    int flag = (*int)info.f;
+    Queue* permQ = info->q;
+    ConditionList condList = info->c;
+    ConditionList table = info->t;
+    int effect = info->e;
+    int flag = (int)*(info->f);
 
     Pair removedPair = NULL;
     PairList permutation = NULL;
@@ -29,11 +32,11 @@ void sufficientThread(void* data){
 }
 
 threadInfo *infoCreate(Queue* q, ConditionList c, ConditionList t, int e, int* f){
-    threadInfo new_threadInfo = malloc(sizeof(threadInfo));
-    new_threadInfo.q = q;
-    new_threadInfo.c = c;
-    new_threadInfo.t = t;
-    new_threadInfo.e = e;
-    new_threadInfo.f = f;
-    return &new_threadInfo;
+    threadInfo* new_threadInfo = malloc(sizeof(threadInfo));
+    new_threadInfo->q = q;
+    new_threadInfo->c = c;
+    new_threadInfo->t = t;
+    new_threadInfo->e = e;
+    new_threadInfo->f = f;
+    return new_threadInfo;
 }
