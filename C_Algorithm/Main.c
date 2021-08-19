@@ -173,11 +173,11 @@ Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
         current = current->next;
     }
     // Set flag to notify we are done creating permutations
-    isDone = 1;
+    *(info->f) = 1;
     
     for (int i = 0; i < numThreads; i++)
     {
-        //pthread_join(threadIds[i], NULL);
+        pthread_join(threadIds[i], NULL);
     }
 
     return queue;

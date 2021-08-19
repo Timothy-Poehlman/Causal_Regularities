@@ -10,13 +10,13 @@ void* sufficientThread(void* data){
     ConditionList condList = info->c;
     ConditionList table = info->t;
     int effect = info->e;
-    int flag = (int)*(info->f);
+    int* flag = info->f;
 
     Pair removedPair = NULL;
     PairList permutation = NULL;
     while(1){
-        //grab from quuee
-        permutation = dequeue(permQ, flag);
+        //grab from queue
+        permutation = dequeue(permQ, *flag);
         //perform on perm
         for(int i=0;i<permutation->location;i++){
             //remove
