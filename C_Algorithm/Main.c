@@ -85,7 +85,6 @@ int main(int argc, char *argv[])
             }
             printf("end ConditionList_______________________\n");
         }
-
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
 
         free(conditionList);
@@ -173,13 +172,12 @@ Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
         permutations(current, 0, current->location - 1, queue);
         current = current->next;
     }
-
     // Set flag to notify we are done creating permutations
     isDone = 1;
-
+    
     for (int i = 0; i < numThreads; i++)
     {
-        pthread_join(threadIds[i], NULL);
+        //pthread_join(threadIds[i], NULL);
     }
 
     return queue;

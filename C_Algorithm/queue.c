@@ -46,7 +46,7 @@ void enqueue(struct Queue* queue, PairList item)
             queue->array[queue->rear] = item;
             queue->size = queue->size + 1;
 
-            pthread_cond_broadcast(&(queue->removeCond));
+            pthread_cond_signal(&(queue->removeCond));
             pthread_mutex_unlock(&(queue->lock));
             break;
         }
@@ -60,16 +60,18 @@ PairList dequeue(struct Queue* queue, int flag)
     pthread_mutex_lock(&(queue->lock));
 
     while (1) {
-        if (isEmpty(queue))
-            if(flag)
+        if (isEmpty(queue)) {
+            if (flag)
                 pthread_exit(0);
             else
-                pthread_cond_wait(&(queue->addCond), &(queue->lock));
+                pthread_cond_wait(&(queue->removeCond), &(queue->lock));
+        }
         else {
             PairList item = queue->array[queue->front];
             queue->front = (queue->front + 1) % queue->capacity;
             queue->size = queue->size - 1;
 
+            pthread_cond_signal(&(queue->addCond));
             pthread_mutex_unlock(&(queue->lock));
             return item;
         }
