@@ -28,7 +28,7 @@ PairList front(struct Queue* queue);
 
 // Function to remove an item from queue.
 // It changes front and size
-PairList dequeue(struct Queue* queue, int flag);
+PairList dequeue(struct Queue* queue, int* flag);
 
 // Function to add an item to the queue.
 // It changes rear and size

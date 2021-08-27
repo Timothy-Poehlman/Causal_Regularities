@@ -174,6 +174,7 @@ Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
     }
     // Set flag to notify we are done creating permutations
     *(info->f) = 1;
+    pthread_cond_broadcast(&(queue->removeCond));
     
     for (int i = 0; i < numThreads; i++)
     {

@@ -16,7 +16,7 @@ void* sufficientThread(void* data){
     PairList permutation = NULL;
     while(1){
         //grab from queue
-        permutation = dequeue(permQ, *flag);
+        permutation = dequeue(permQ, flag);
         //perform on perm
         for(int i=0;i<permutation->location;i++){
             //remove

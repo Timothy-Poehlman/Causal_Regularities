@@ -56,13 +56,13 @@ void enqueue(struct Queue* queue, PairList item)
  
 // Function to remove an item from queue.
 // It changes front and size
-PairList dequeue(struct Queue* queue, int flag)
+PairList dequeue(struct Queue* queue, int* flag)
 {
     pthread_mutex_lock(&(queue->lock));
 
     while (1) {
         if (isEmpty(queue)) {
-            if (flag) {
+            if (*flag) {
                 printf("exiting\n");
                 pthread_exit(0);
             }
