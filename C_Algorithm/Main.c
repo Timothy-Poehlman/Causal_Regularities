@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     //read csv - if given a csv in "NAME.csv", it will override this
     FILE *stream = fopen("TESTINPUT.csv", "r");
 
-    //check arguments
+    //check argumentss
     /*  setStream causing issues
     for (int i = 0; i < argc; i++)
     {
