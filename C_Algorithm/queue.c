@@ -64,6 +64,7 @@ PairList dequeue(struct Queue* queue, int* flag)
         if (isEmpty(queue)) {
             if (*flag) {
                 printf("exiting\n");
+                pthread_mutex_unlock(&(queue->lock));
                 pthread_exit(0);
             }
             else
