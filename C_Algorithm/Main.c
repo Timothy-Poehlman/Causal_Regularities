@@ -181,6 +181,8 @@ Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
         pthread_join(threadIds[i], NULL);
     }
 
+    //return conditionlist from threadinfo instead of queue
+
     return queue;
 }
 
