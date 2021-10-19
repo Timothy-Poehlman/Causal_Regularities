@@ -88,6 +88,13 @@ int main(int argc, char *argv[])
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
 
         free(conditionList);
+
+        //step 5
+        if(check_necessary(table, sufficientSet, effect))
+        {
+            //step 6
+            step6();
+        }
     }
     free(potential_effects);
 }
@@ -149,7 +156,7 @@ ConditionList step2(ConditionList table, int effect)
  * table: Main table of all coincidences
  * effect: The effect that is being analyzed
  */
-Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
+ConditionList step3(ConditionList inputConditions, ConditionList table, int effect)
 {
     ConditionList minimally_sufficient_conditions = make_CList();
 
@@ -181,37 +188,73 @@ Queue* step3(ConditionList inputConditions, ConditionList table, int effect)
         pthread_join(threadIds[i], NULL);
     }
 
-    //return conditionlist from threadinfo instead of queue
-
-    return queue;
+    return minimally_sufficient_conditions;
 }
 
-/*
-maint_table: the original table of values
-effect : the factor being examined
-conditionList : a list of all sufficient conditions
 
-minimally_sufficient_conditions : a set of all minimally sufficient conditions
+/* Minimally Necessary Minimally Sufficient Conditions
+ * NEEDS REVISION **
+ */
+
+ConditionList step6(ConditionList table, ConditionList necessary_conditions, int effect)
+{
+    ConditionList minimally_necessary_conditions = make_CList();
+
+    Queue *queue = createQueue(numThreads);
+
+    int isDone = 0;
+
+    pthread_t threadIds[numThreads];
+    threadInfo *info = infoCreate(queue, minimally_necessary_conditions, table, effect, &isDone);
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        pthread_create(&threadIds[i], NULL, &necessaryThread, info);
+    }
+
+    // Loop through each condition, check all permutations, add them if they pass to [queue]
+    PairList current = inputConditions->list;
+    while (current)
+    {
+        /*
+         * Change permutations to fit the necessary
+         * we need permutations of a conditionlist, not a pairlist
+         */
+        permutations(current, 0, current->location - 1, queue);
+        current = current->next;
+    }
+    // Set flag to notify we are done creating permutations
+    *(info->f) = 1;
+    pthread_cond_broadcast(&(queue->removeCond));
+    
+    for (int i = 0; i < numThreads; i++)
+    {
+        pthread_join(threadIds[i], NULL);
+    }
+
+    return minimally_necessary_conditions;
+}
+
 '''
-def step3(conditionList, main_table, effect) :
-    minimally_sufficient_conditions = []
+maint_table: the original table of values
+effect: the factor being examined
+necessary_condition: the necessary condition (not minimized)
 
-    for condition in conditionList :
-        prm_list = list(permutations(range(0, len(condition))))
-        for prm in prm_list :
-            #create pairlist of
-            modif_condition = []
-            for index in prm :
-                modif_condition.append(condition[index])
-            tmp_list = copy.deepcopy(modif_condition)
-            for factor in tmp_list :
-                #remove
-                modif_condition.remove(factor)
-                #is sufficient ?
-                if not check_sufficient(modif_condition, table, effect) :
-                    modif_condition.append(factor)
-            if not pairListIn(minimally_sufficient_conditions, modif_condition) :
-                minimally_sufficient_conditions.append(modif_condition)
+pair structure -> (index, value)
 
-    return minimally_sufficient_conditions
-*/
+minimally_necessary_conditions: the conditions that are minimally necessary for the given effect
+'''
+def step6(main_table, necessary_condition, effect):
+    minimally_necessary_conditions = []
+    prm_list = list(permutations(range(0, len(necessary_condition))))
+    for prm in prm_list:
+        test_necessary_condition = []
+        for index in prm:
+            test_necessary_condition.append(necessary_condition[index])
+        for i in range(0, len(test_necessary_condition)):
+            suff_cond = test_necessary_condition.pop(0)
+            if not check_necessary(main_table, test_necessary_condition, effect):
+                test_necessary_condition.append(suff_cond)
+        if not pairListListIn(minimally_necessary_conditions, test_necessary_condition):
+            minimally_necessary_conditions.append(test_necessary_condition)
+    return minimally_necessary_conditions

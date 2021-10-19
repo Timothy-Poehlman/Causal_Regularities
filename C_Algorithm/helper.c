@@ -161,3 +161,48 @@ FILE* setStream(char* arg)
     FILE* stream = fopen(sString+1, "r");
     return stream;
 }
+
+int check_necessary(ConditionList table, ConditionList conditions, int effect)
+{
+    PairList row = table -> list;
+    int necessary;
+    int found_match;
+
+    //For every row in table
+    while(row)
+    {
+        //if effect is there
+        if(row->list[effect]->value)
+        {
+            necessary = 0;
+            //for condition in conditions
+            condition = conditions->list;
+            while(condition)
+            {
+                found_match = 1;
+                //for pair in condition
+                for(int i=0;i<condition->location;i++)
+                {
+                    Pair pair = condition->list[i];
+                    if(pair->value != row[pair->index])
+                    {
+                        found_match = 0;
+                    }
+                }
+                if(found_match)
+                {
+                    necessary = 1;
+                    break;
+                }
+
+                condition = condition->next;
+            }
+            if(necessary == 0)
+            {
+                return 0;
+            }
+        }
+        row = row->next
+    }
+    return 1;
+}
