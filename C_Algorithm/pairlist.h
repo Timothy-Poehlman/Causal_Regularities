@@ -13,6 +13,7 @@ struct pair_list
     int size; //allocated size
     int location; //end of list
     PairList next;
+    PairList prev;
 } pair_list;
 
 Pair make_pair(int index, int value);

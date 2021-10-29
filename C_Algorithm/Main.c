@@ -8,7 +8,8 @@
 
 int *step0(ConditionList main_table, int *NegFactorSet, int *numPotEffects);
 ConditionList step2(ConditionList table, int effect);
-Queue* step3(ConditionList inputConditions, ConditionList table, int effect);
+ConditionList step3(ConditionList inputConditions, ConditionList table, int effect);
+ConditionList step6(ConditionList table, ConditionList necessary_conditions, int effect);
 
 int debug = 1;
 int numThreads = 8;
@@ -22,7 +23,7 @@ int main(int argc, char *argv[])
     int *potential_effects;
     int numPotEffects = 0;
     ConditionList conditionList;
-    Queue *sufficientSet;
+    ConditionList sufficientSet;
 
     //read csv - if given a csv in "NAME.csv", it will override this
     FILE *stream = fopen("TESTINPUT.csv", "r");
@@ -93,7 +94,7 @@ int main(int argc, char *argv[])
         if(check_necessary(table, sufficientSet, effect))
         {
             //step 6
-            step6();
+            step6(table, sufficientSet, effect);
         }
     }
     free(potential_effects);
@@ -176,7 +177,7 @@ ConditionList step3(ConditionList inputConditions, ConditionList table, int effe
     PairList current = inputConditions->list;
     while (current)
     {
-        permutations(current, 0, current->location - 1, queue);
+        plPermutations(current, 0, current->location - 1, queue);
         current = current->next;
     }
     // Set flag to notify we are done creating permutations
@@ -198,9 +199,9 @@ ConditionList step3(ConditionList inputConditions, ConditionList table, int effe
 
 ConditionList step6(ConditionList table, ConditionList necessary_conditions, int effect)
 {
-    ConditionList minimally_necessary_conditions = make_CList();
+    //create array  of conditionlists for minimally necessary conditions
 
-    Queue *queue = createQueue(numThreads);
+    CLQueue *queue = createCLQueue(numThreads);
 
     int isDone = 0;
 
@@ -212,17 +213,8 @@ ConditionList step6(ConditionList table, ConditionList necessary_conditions, int
         pthread_create(&threadIds[i], NULL, &necessaryThread, info);
     }
 
-    // Loop through each condition, check all permutations, add them if they pass to [queue]
-    PairList current = inputConditions->list;
-    while (current)
-    {
-        /*
-         * Change permutations to fit the necessary
-         * we need permutations of a conditionlist, not a pairlist
-         */
-        permutations(current, 0, current->location - 1, queue);
-        current = current->next;
-    }
+    clPermutations(necessary_conditions, necessary_conditions->list, queue);
+
     // Set flag to notify we are done creating permutations
     *(info->f) = 1;
     pthread_cond_broadcast(&(queue->removeCond));
@@ -235,7 +227,7 @@ ConditionList step6(ConditionList table, ConditionList necessary_conditions, int
     return minimally_necessary_conditions;
 }
 
-'''
+/*'''
 maint_table: the original table of values
 effect: the factor being examined
 necessary_condition: the necessary condition (not minimized)
@@ -258,3 +250,4 @@ def step6(main_table, necessary_condition, effect):
         if not pairListListIn(minimally_necessary_conditions, test_necessary_condition):
             minimally_necessary_conditions.append(test_necessary_condition)
     return minimally_necessary_conditions
+    */

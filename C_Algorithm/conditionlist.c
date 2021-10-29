@@ -22,6 +22,7 @@ void CList_add(ConditionList c, PairList p) {
             current = current->next;
         }
         current->next = p;
+        p->prev = current;
     }
 }
 

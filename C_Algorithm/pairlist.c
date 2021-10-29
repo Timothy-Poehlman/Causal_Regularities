@@ -23,6 +23,8 @@ PairList make_pairList()
     pairList->list = malloc(sizeof(Pair));
     pairList->size = 1;
     pairList->location = 0;
+    output->next = NULL;
+    output->prev = NULL;
     return pairList;
 }
 
@@ -36,6 +38,7 @@ PairList copy_pairList(PairList p) {
     output->size = p->location;
     output->location = p->location;
     output->next = NULL;
+    output->prev = NULL;
     return output;
 }
 

@@ -111,7 +111,7 @@ int check_sufficient(PairList condition,ConditionList table,int effect)
  *              r: right bound
  *              outputQueue: The queue that the solutions should be put into
  */
-void permutations(PairList input, int l, int r, Queue* outputQueue) {
+void plPermutations(PairList input, int l, int r, Queue* outputQueue) {
     if (l==r) {
         //output
         PairList copy = copy_pairList(input);
@@ -119,18 +119,43 @@ void permutations(PairList input, int l, int r, Queue* outputQueue) {
     }
     else {
         for (int i = l; i <= r;i++) {
-            swap(input->list + l, input->list + i);
-            permutations(input, l + 1, r, outputQueue);
-            swap(input->list + l, input->list + i);
+            plSwap(input->list + l, input->list + i);
+            plPermutations(input, l + 1, r, outputQueue);
+            plSwap(input->list + l, input->list + i);
         }
     }
 }
 
-void swap(Pair* a, Pair* b) {
+void plSwap(Pair* a, Pair* b) {
     Pair temp;
     temp = *a;
     *a = *b;
     *b = temp;
+}
+
+void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
+    if (!current->next) {
+        //output
+        ConditionList copy = copy_conditionList(input);
+        enqueue(outputQueue, copy);
+    }
+    else {
+        PairList current = l;
+        while (current) {
+            clSwap(l, current);
+            clPermutations(input, l->next, outputQueue);
+            clSwap(l, current);
+        }
+    }
+}
+
+void clSwap(PairList pl1, PairList pl2) {
+    pl1Prev = pl1->prev;
+    pl1Next = pl1->next;
+    pl1->prev = pl2->prev;
+    pl1->next = pl2->next;
+    pl2->prev = pl1Prev;
+    pl2->next = pl1Next;
 }
 
 void setFlags(char* flags)
