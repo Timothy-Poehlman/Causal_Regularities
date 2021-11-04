@@ -23,8 +23,8 @@ PairList make_pairList()
     pairList->list = malloc(sizeof(Pair));
     pairList->size = 1;
     pairList->location = 0;
-    output->next = NULL;
-    output->prev = NULL;
+    pairList->next = NULL;
+    pairList->prev = NULL;
     return pairList;
 }
 

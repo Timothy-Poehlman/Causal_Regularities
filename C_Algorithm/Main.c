@@ -3,13 +3,14 @@
 #include <string.h>
 #include <pthread.h>
 #include "conditionlist.h"
+#include "solutionlist.h"
 #include "helper.h"
 #include "thread.h"
 
 int *step0(ConditionList main_table, int *NegFactorSet, int *numPotEffects);
 ConditionList step2(ConditionList table, int effect);
 ConditionList step3(ConditionList inputConditions, ConditionList table, int effect);
-ConditionList step6(ConditionList table, ConditionList necessary_conditions, int effect);
+SolutionList step6(ConditionList table, ConditionList necessary_conditions, int effect);
 
 int debug = 1;
 int numThreads = 8;
@@ -197,16 +198,16 @@ ConditionList step3(ConditionList inputConditions, ConditionList table, int effe
  * NEEDS REVISION **
  */
 
-ConditionList step6(ConditionList table, ConditionList necessary_conditions, int effect)
+SolutionList step6(ConditionList table, ConditionList necessary_conditions, int effect)
 {
-    //create array  of conditionlists for minimally necessary conditions
+    SolutionList minimally_necessary_conditions = create_solutionList();
 
     CLQueue *queue = createCLQueue(numThreads);
 
     int isDone = 0;
 
     pthread_t threadIds[numThreads];
-    threadInfo *info = infoCreate(queue, minimally_necessary_conditions, table, effect, &isDone);
+    clThreadInfo *info = clInfoCreate(queue, minimally_necessary_conditions, table, effect, &isDone);
 
     for (int i = 0; i < numThreads; i++)
     {

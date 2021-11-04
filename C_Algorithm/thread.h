@@ -4,6 +4,13 @@
 #include "queue.h"
 #include "conditionlist.h"
 
+/*
+* q: queue of permutations (pairlists)
+* c: minimally sufficient conditions (output)
+* t: the table
+* e: the effect
+* f: flag for exiting
+*/
 typedef struct threadInfo {
     Queue* q;
     ConditionList c;
@@ -12,7 +19,18 @@ typedef struct threadInfo {
     int* f;
 }threadInfo;
 
+typedef struct clThreadInfo {
+    CLQueue* q;
+    SolutionList c;
+    ConditionList t;
+    int e;
+    int* f;
+}clThreadInfo;
+
 void* sufficientThread(void* data);
+void* necessaryThread(void* data);
+
 threadInfo* infoCreate(Queue* q, ConditionList c, ConditionList t, int e, int* f);
+clThreadInfo* clInfoCreate(CLQueue* q, SolutionList c, ConditionList t, int e, int* f);
 
 #endif

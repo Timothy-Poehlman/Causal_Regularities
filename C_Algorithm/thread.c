@@ -40,3 +40,13 @@ threadInfo *infoCreate(Queue* q, ConditionList c, ConditionList t, int e, int* f
     new_threadInfo->f = f;
     return new_threadInfo;
 }
+
+clThreadInfo* clInfoCreate(CLQueue* q, SolutionList c, ConditionList t, int e, int* f) {
+    clThreadInfo* new_clThreadInfo = malloc(sizeof(clThreadInfo));
+    new_clThreadInfo->q = q;
+    new_clThreadInfo->c = c;
+    new_clThreadInfo->t = t;
+    new_clThreadInfo->e = e;
+    new_clThreadInfo->f = f;
+    return new_clThreadInfo;
+}
