@@ -14,6 +14,7 @@ struct Queue* createQueue(unsigned capacity)
     // This is important, see the enqueue
     queue->rear = capacity - 1;
     queue->array = (PairList*)malloc(queue->capacity * sizeof(PairList));
+    queue->lock = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     queue->addCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     queue->removeCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     return queue;

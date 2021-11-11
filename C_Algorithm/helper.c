@@ -135,15 +135,18 @@ void plSwap(Pair* a, Pair* b) {
 
 void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
     PairList current = l;
-    if (!current->next) {
+    if (!current) {
         //output
-        clEnqueue(outputQueue, input);
+        ConditionList copy = CList_Copy(input);
+        printf("enqueuinging\n");
+        clEnqueue(outputQueue, copy);
     }
     else {
         while (current) {
             clSwap(l, current);
             clPermutations(input, l->next, outputQueue);
             clSwap(l, current);
+            current = current->next;
         }
     }
 }

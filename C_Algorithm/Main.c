@@ -189,7 +189,6 @@ ConditionList step3(ConditionList inputConditions, ConditionList table, int effe
     {
         pthread_join(threadIds[i], NULL);
     }
-
     return minimally_sufficient_conditions;
 }
 
@@ -211,6 +210,7 @@ SolutionList step6(ConditionList table, ConditionList necessary_conditions, int 
 
     for (int i = 0; i < numThreads; i++)
     {
+        printf("making %d of %d\n",i+1,numThreads);
         pthread_create(&threadIds[i], NULL, &necessaryThread, info);
     }
 
@@ -222,6 +222,7 @@ SolutionList step6(ConditionList table, ConditionList necessary_conditions, int 
     
     for (int i = 0; i < numThreads; i++)
     {
+        printf("exiting %d of %d\n",i+1,numThreads);
         pthread_join(threadIds[i], NULL);
     }
 

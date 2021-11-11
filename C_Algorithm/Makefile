@@ -13,7 +13,7 @@ clean:
 
 Main.o: Main.c conditionlist.h helper.h thread.h
 
-helper.o: conditionlist.h queue.h
+helper.o: clqueue.h conditionlist.h queue.h
 
 conditionlist.o: pairlist.h
 

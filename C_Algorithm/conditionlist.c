@@ -26,6 +26,20 @@ void CList_add(ConditionList c, PairList p) {
     }
 }
 
+PairList CList_Pop(ConditionList cList){
+    PairList output = cList->list;
+    if(!output){
+        return NULL;
+    }
+    PairList new_head = output->next;
+    cList->list = new_head;
+    if(new_head){
+        new_head->prev = NULL;
+    }
+    output->next = NULL;
+    return output;
+}
+
 void CList_free(ConditionList c) {
 
 }
@@ -50,6 +64,16 @@ void CList_print(ConditionList c) {
         printf("\n");
         current = current->next;
     }
+}
+
+ConditionList CList_Copy(ConditionList c){
+    ConditionList copy = make_CList();
+    PairList current = copy->list;
+    while(current){
+        CList_add(copy,copy_pairList(current));
+        current = current->next;
+    }
+    return copy;
 }
 
 void t_setInsert(ConditionList cList, PairList pList) {

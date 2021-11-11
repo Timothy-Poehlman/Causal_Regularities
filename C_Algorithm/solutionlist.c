@@ -15,7 +15,7 @@ SolutionNode create_solution_node(ConditionList data) {
 	return node;
 }
 
-void add(ConditionList cList, SolutionList sList) {
+void sl_t_setInsert(ConditionList cList, SolutionList sList) {
 	SolutionNode new_node = create_solution_node(cList);
 	pthread_mutex_lock(&(sList->lock));
 	if (sList->end) {
