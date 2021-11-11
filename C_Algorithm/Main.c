@@ -89,13 +89,17 @@ int main(int argc, char *argv[])
         }
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
 
+        printf("TTTTTTTTTTTTTTTTTTTTT");
+        CList_print(sufficientSet);
+        
         free(conditionList);
 
         //step 5
         if(check_necessary(table, sufficientSet, effect))
         {
             //step 6
-            step6(table, sufficientSet, effect);
+            SolutionList solution = step6(table, sufficientSet, effect);
+            print_sl(solution);
         }
     }
     free(potential_effects);

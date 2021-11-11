@@ -22,5 +22,6 @@ struct solution_list
 SolutionList create_solutionList();
 SolutionNode create_solution_node(ConditionList data);
 void sl_t_setInsert(ConditionList cList, SolutionList sList);
+void print_sl(SolutionList sList);
 
 #endif

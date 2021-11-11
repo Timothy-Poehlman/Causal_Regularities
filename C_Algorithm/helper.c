@@ -138,7 +138,6 @@ void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
     if (!current) {
         //output
         ConditionList copy = CList_Copy(input);
-        printf("enqueuinging\n");
         clEnqueue(outputQueue, copy);
     }
     else {
@@ -189,6 +188,10 @@ FILE* setStream(char* arg)
     return stream;
 }
 
+/*
+ * necessary returns 1
+ * not returns 0
+ */
 int check_necessary(ConditionList table, ConditionList conditions, int effect)
 {
     PairList row = table -> list;

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "solutionlist.h"
 
@@ -27,4 +28,16 @@ void sl_t_setInsert(ConditionList cList, SolutionList sList) {
 		sList->end = new_node;
 	}
 	pthread_mutex_unlock(&(sList->lock));
+}
+
+void print_sl(SolutionList sList){
+	printf("printing sol list, first is size %d\n",sList->front->solution->size);
+	if(!sList->front->solution){
+		printf("empty\n");
+	}
+	SolutionNode current = sList->front;
+	while(current){
+		CList_print(current->solution);
+		current = current->next;
+	}
 }

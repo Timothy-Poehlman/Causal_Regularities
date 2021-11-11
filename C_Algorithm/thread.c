@@ -12,6 +12,7 @@ void* sufficientThread(void* data){
     ConditionList table = info->t;
     int effect = info->e;
     int* flag = info->f;
+    int end;
 
     Pair removedPair = NULL;
     PairList permutation = NULL;
@@ -19,7 +20,8 @@ void* sufficientThread(void* data){
         //grab from queue
         permutation = dequeue(permQ, flag);
         //perform on perm
-        for(int i=0;i<permutation->location;i++){
+        end = permutation->location;
+        for(int i=0;i<end;i++){
             //remove
             removedPair = pairList_pop(permutation);
             //is still sufficient?
@@ -46,12 +48,14 @@ void* necessaryThread(void* data){
     while(1){
         //grab from queue
         condition = clDequeue(permQ, flag);
+        CList_print(condition);
         //perform on perm
         for(int i=0;i<condition->size;i++){
             //remove
             removedPairList = CList_Pop(condition);
             //is still necessary?
             if(!check_necessary(condition,table,effect)){
+                printf("IT WAS not NECESSARY I SAY =================================\n");
                 CList_add(condition,removedPairList);
             }
         }
