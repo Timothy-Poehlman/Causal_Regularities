@@ -134,13 +134,12 @@ void plSwap(Pair* a, Pair* b) {
 }
 
 void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
+    PairList current = l;
     if (!current->next) {
         //output
-        ConditionList copy = copy_conditionList(input);
-        enqueue(outputQueue, copy);
+        clEnqueue(outputQueue, input);
     }
     else {
-        PairList current = l;
         while (current) {
             clSwap(l, current);
             clPermutations(input, l->next, outputQueue);
@@ -150,8 +149,8 @@ void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
 }
 
 void clSwap(PairList pl1, PairList pl2) {
-    pl1Prev = pl1->prev;
-    pl1Next = pl1->next;
+    PairList pl1Prev = pl1->prev;
+    PairList pl1Next = pl1->next;
     pl1->prev = pl2->prev;
     pl1->next = pl2->next;
     pl2->prev = pl1Prev;
@@ -201,7 +200,7 @@ int check_necessary(ConditionList table, ConditionList conditions, int effect)
         {
             necessary = 0;
             //for condition in conditions
-            condition = conditions->list;
+            PairList condition = conditions->list;
             while(condition)
             {
                 found_match = 1;
@@ -209,7 +208,7 @@ int check_necessary(ConditionList table, ConditionList conditions, int effect)
                 for(int i=0;i<condition->location;i++)
                 {
                     Pair pair = condition->list[i];
-                    if(pair->value != row[pair->index])
+                    if(pair->value != row->list[pair->index]->value)
                     {
                         found_match = 0;
                     }
@@ -227,7 +226,7 @@ int check_necessary(ConditionList table, ConditionList conditions, int effect)
                 return 0;
             }
         }
-        row = row->next
+        row = row->next;
     }
     return 1;
 }

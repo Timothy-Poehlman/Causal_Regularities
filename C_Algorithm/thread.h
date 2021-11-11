@@ -2,7 +2,9 @@
 #define THREAD
 
 #include "queue.h"
+#include "clqueue.h"
 #include "conditionlist.h"
+#include "solutionlist.h"
 
 /*
 * q: queue of permutations (pairlists)

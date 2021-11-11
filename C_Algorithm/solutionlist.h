@@ -1,3 +1,8 @@
+#ifndef SOLUTIONLIST
+#define SOLUTIONLIST
+
+#include "conditionlist.h"
+
 typedef struct solution_list* SolutionList;
 typedef struct solution_node* SolutionNode;
 
@@ -17,3 +22,5 @@ struct solution_list
 SolutionList create_solutionList();
 SolutionNode create_solution_node(ConditionList data);
 void add(ConditionList cList, SolutionList sList);
+
+#endif

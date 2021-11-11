@@ -1,6 +1,7 @@
 #ifndef COND
 #define COND
 #include "pairlist.h"
+#include <pthread.h>
 
 typedef struct condition_list *ConditionList;
 struct condition_list

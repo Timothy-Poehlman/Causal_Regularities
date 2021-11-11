@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "solutionlist.h"
 
 SolutionList create_solutionList() {
@@ -8,7 +9,7 @@ SolutionList create_solutionList() {
 }
 
 SolutionNode create_solution_node(ConditionList data) {
-	SolutionNode node = malloc(sizeof(solution_node));
+	SolutionNode node = malloc(sizeof(struct solution_node));
 	node->solution = data;
 	node->next = NULL;
 	return node;
