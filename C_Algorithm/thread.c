@@ -42,6 +42,7 @@ void* necessaryThread(void* data){
     ConditionList table = info->t;
     int effect = info->e;
     int* flag = info->f;
+    int end;
 
     PairList removedPairList = NULL;
     ConditionList condition = NULL;
@@ -49,8 +50,9 @@ void* necessaryThread(void* data){
         //grab from queue
         condition = clDequeue(permQ, flag);
         CList_print(condition);
+        end = condition->size;
         //perform on perm
-        for(int i=0;i<condition->size;i++){
+        for(int i=0;i<end;i++){
             //remove
             removedPairList = CList_Pop(condition);
             //is still necessary?

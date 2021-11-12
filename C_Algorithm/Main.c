@@ -89,9 +89,6 @@ int main(int argc, char *argv[])
         }
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
 
-        printf("TTTTTTTTTTTTTTTTTTTTT");
-        CList_print(sufficientSet);
-        
         free(conditionList);
 
         //step 5

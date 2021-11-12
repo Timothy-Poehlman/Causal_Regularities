@@ -138,6 +138,8 @@ void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
     if (!current) {
         //output
         ConditionList copy = CList_Copy(input);
+        printf("TTTTTTTTTTTTTTTTTTTTT\n");
+        CList_print(copy);
         clEnqueue(outputQueue, copy);
     }
     else {
