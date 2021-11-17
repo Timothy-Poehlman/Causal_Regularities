@@ -20,4 +20,5 @@ void CList_print(ConditionList c);
 void t_setInsert(ConditionList cList, PairList pList);
 PairList CList_Pop(ConditionList cList);
 ConditionList CList_Copy(ConditionList c);
+int conditionListsEqual(ConditionList cList1, ConditionList cList2);
 #endif

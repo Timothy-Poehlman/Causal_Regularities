@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     int numPotEffects = 0;
     ConditionList conditionList;
     ConditionList sufficientSet;
+    SolutionList solutions;
 
     //read csv - if given a csv in "NAME.csv", it will override this
     FILE *stream = fopen("TESTINPUT.csv", "r");
@@ -88,15 +89,18 @@ int main(int argc, char *argv[])
             printf("end ConditionList_______________________\n");
         }
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
+        CList_print(sufficientSet);
 
         free(conditionList);
 
+        CList_print(table);
+
         //step 5
-        if(check_necessary(table, sufficientSet, effect))
+        if(check_necessary(table, sufficientSet, potential_effects[effect]))
         {
             //step 6
-            SolutionList solution = step6(table, sufficientSet, effect);
-            print_sl(solution);
+            solutions = step6(table, sufficientSet, potential_effects[effect]);
+            print_sl(solutions);
         }
     }
     free(potential_effects);
@@ -190,6 +194,7 @@ ConditionList step3(ConditionList inputConditions, ConditionList table, int effe
     {
         pthread_join(threadIds[i], NULL);
     }
+
     return minimally_sufficient_conditions;
 }
 
@@ -211,7 +216,6 @@ SolutionList step6(ConditionList table, ConditionList necessary_conditions, int 
 
     for (int i = 0; i < numThreads; i++)
     {
-        printf("making %d of %d\n",i+1,numThreads);
         pthread_create(&threadIds[i], NULL, &necessaryThread, info);
     }
 
@@ -223,7 +227,6 @@ SolutionList step6(ConditionList table, ConditionList necessary_conditions, int 
     
     for (int i = 0; i < numThreads; i++)
     {
-        printf("exiting %d of %d\n",i+1,numThreads);
         pthread_join(threadIds[i], NULL);
     }
 

@@ -16,9 +16,24 @@ SolutionNode create_solution_node(ConditionList data) {
 	return node;
 }
 
+int sl_contains(SolutionList sList, ConditionList cList) {
+	SolutionNode current = sList->front;
+	while (current) {
+		if (conditionListsEqual(current->solution, cList)) {
+			return 1;
+		}
+		current = current->next;
+	}
+	return 0;
+}
+
 void sl_t_setInsert(ConditionList cList, SolutionList sList) {
 	SolutionNode new_node = create_solution_node(cList);
 	pthread_mutex_lock(&(sList->lock));
+	if (sl_contains(sList, cList)) {
+		pthread_mutex_unlock(&(sList->lock));
+		return;
+	}
 	if (sList->end) {
 		sList->end->next = new_node;
 		sList->end = new_node;
@@ -40,4 +55,5 @@ void print_sl(SolutionList sList){
 		CList_print(current->solution);
 		current = current->next;
 	}
+	printf("finished printing SL\n");
 }

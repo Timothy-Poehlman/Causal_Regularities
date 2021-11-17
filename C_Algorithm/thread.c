@@ -49,15 +49,13 @@ void* necessaryThread(void* data){
     while(1){
         //grab from queue
         condition = clDequeue(permQ, flag);
-        CList_print(condition);
         end = condition->size;
         //perform on perm
         for(int i=0;i<end;i++){
             //remove
             removedPairList = CList_Pop(condition);
             //is still necessary?
-            if(!check_necessary(condition,table,effect)){
-                printf("IT WAS not NECESSARY I SAY =================================\n");
+            if(!check_necessary(table,condition,effect)){
                 CList_add(condition,removedPairList);
             }
         }

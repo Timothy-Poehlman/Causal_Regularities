@@ -138,8 +138,6 @@ void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
     if (!current) {
         //output
         ConditionList copy = CList_Copy(input);
-        printf("TTTTTTTTTTTTTTTTTTTTT\n");
-        CList_print(copy);
         clEnqueue(outputQueue, copy);
     }
     else {
@@ -153,12 +151,16 @@ void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
 }
 
 void clSwap(PairList pl1, PairList pl2) {
-    PairList pl1Prev = pl1->prev;
-    PairList pl1Next = pl1->next;
-    pl1->prev = pl2->prev;
-    pl1->next = pl2->next;
-    pl2->prev = pl1Prev;
-    pl2->next = pl1Next;
+    Pair* list1 = pl1->list;
+    int size1 = pl1->size;
+    int loc1 = pl1->location;
+
+    pl1->list = pl2->list;
+    pl1->size = pl2->size;
+    pl1->location = pl2->location;
+    pl2->list = list1;
+    pl2->size = size1;
+    pl2->location = loc1;
 }
 
 void setFlags(char* flags)
@@ -196,41 +198,35 @@ FILE* setStream(char* arg)
  */
 int check_necessary(ConditionList table, ConditionList conditions, int effect)
 {
+
     PairList row = table -> list;
     int necessary;
     int found_match;
 
     //For every row in table
-    while(row)
-    {
+    while(row){
         //if effect is there
-        if(row->list[effect]->value)
-        {
+        if(row->list[effect]->value){
             necessary = 0;
             //for condition in conditions
             PairList condition = conditions->list;
-            while(condition)
-            {
+            while(condition){
                 found_match = 1;
                 //for pair in condition
-                for(int i=0;i<condition->location;i++)
-                {
+                for(int i=0;i<condition->location;i++){
                     Pair pair = condition->list[i];
-                    if(pair->value != row->list[pair->index]->value)
-                    {
+                    if(pair->value != row->list[pair->index]->value){
                         found_match = 0;
                     }
                 }
-                if(found_match)
-                {
+                if(found_match){
                     necessary = 1;
                     break;
                 }
 
                 condition = condition->next;
             }
-            if(necessary == 0)
-            {
+            if(necessary == 0){
                 return 0;
             }
         }

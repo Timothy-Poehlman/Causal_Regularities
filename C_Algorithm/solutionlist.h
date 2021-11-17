@@ -23,5 +23,6 @@ SolutionList create_solutionList();
 SolutionNode create_solution_node(ConditionList data);
 void sl_t_setInsert(ConditionList cList, SolutionList sList);
 void print_sl(SolutionList sList);
+int sl_contains(SolutionList sList, ConditionList cList);
 
 #endif
