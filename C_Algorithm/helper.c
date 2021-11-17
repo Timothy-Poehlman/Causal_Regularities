@@ -134,28 +134,33 @@ void plSwap(Pair* a, Pair* b) {
 }
 
 void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
-    if (!current->next) {
+    PairList current = l;
+    if (!current) {
         //output
-        ConditionList copy = copy_conditionList(input);
-        enqueue(outputQueue, copy);
+        ConditionList copy = CList_Copy(input);
+        clEnqueue(outputQueue, copy);
     }
     else {
-        PairList current = l;
         while (current) {
             clSwap(l, current);
             clPermutations(input, l->next, outputQueue);
             clSwap(l, current);
+            current = current->next;
         }
     }
 }
 
 void clSwap(PairList pl1, PairList pl2) {
-    pl1Prev = pl1->prev;
-    pl1Next = pl1->next;
-    pl1->prev = pl2->prev;
-    pl1->next = pl2->next;
-    pl2->prev = pl1Prev;
-    pl2->next = pl1Next;
+    Pair* list1 = pl1->list;
+    int size1 = pl1->size;
+    int loc1 = pl1->location;
+
+    pl1->list = pl2->list;
+    pl1->size = pl2->size;
+    pl1->location = pl2->location;
+    pl2->list = list1;
+    pl2->size = size1;
+    pl2->location = loc1;
 }
 
 void setFlags(char* flags)
@@ -187,47 +192,45 @@ FILE* setStream(char* arg)
     return stream;
 }
 
+/*
+ * necessary returns 1
+ * not returns 0
+ */
 int check_necessary(ConditionList table, ConditionList conditions, int effect)
 {
+
     PairList row = table -> list;
     int necessary;
     int found_match;
 
     //For every row in table
-    while(row)
-    {
+    while(row){
         //if effect is there
-        if(row->list[effect]->value)
-        {
+        if(row->list[effect]->value){
             necessary = 0;
             //for condition in conditions
-            condition = conditions->list;
-            while(condition)
-            {
+            PairList condition = conditions->list;
+            while(condition){
                 found_match = 1;
                 //for pair in condition
-                for(int i=0;i<condition->location;i++)
-                {
+                for(int i=0;i<condition->location;i++){
                     Pair pair = condition->list[i];
-                    if(pair->value != row[pair->index])
-                    {
+                    if(pair->value != row->list[pair->index]->value){
                         found_match = 0;
                     }
                 }
-                if(found_match)
-                {
+                if(found_match){
                     necessary = 1;
                     break;
                 }
 
                 condition = condition->next;
             }
-            if(necessary == 0)
-            {
+            if(necessary == 0){
                 return 0;
             }
         }
-        row = row->next
+        row = row->next;
     }
     return 1;
 }

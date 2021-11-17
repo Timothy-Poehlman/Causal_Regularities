@@ -14,6 +14,7 @@ struct CLQueue* createCLQueue(unsigned capacity)
     // This is important, see the enqueue
     queue->rear = capacity - 1;
     queue->array = (ConditionList*)malloc(queue->capacity * sizeof(ConditionList));
+    queue->lock = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     queue->addCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     queue->removeCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     return queue;
@@ -37,12 +38,10 @@ int clIsEmpty(struct CLQueue* queue)
 void clEnqueue(struct CLQueue* queue, ConditionList item)
 {
     pthread_mutex_lock(&(queue->lock));
-
     while (1) {
         if (clIsFull(queue))
             pthread_cond_wait(&(queue->addCond), &(queue->lock));
         else {
-            printf("adding to queue\n");
             queue->rear = (queue->rear + 1) % queue->capacity;
             queue->array[queue->rear] = item;
             queue->size = queue->size + 1;
@@ -63,15 +62,14 @@ ConditionList clDequeue(struct CLQueue* queue, int* flag)
     while (1) {
         if (clIsEmpty(queue)) {
             if (*flag) {
-                printf("exiting\n");
                 pthread_mutex_unlock(&(queue->lock));
                 pthread_exit(0);
             }
-            else
+            else{
                 pthread_cond_wait(&(queue->removeCond), &(queue->lock));
+            }
         }
         else {
-            printf("removing from queue\n");
             ConditionList item = queue->array[queue->front];
             queue->front = (queue->front + 1) % queue->capacity;
             queue->size = queue->size - 1;

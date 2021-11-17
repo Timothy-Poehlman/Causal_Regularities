@@ -2,7 +2,9 @@
 #define THREAD
 
 #include "queue.h"
+#include "clqueue.h"
 #include "conditionlist.h"
+#include "solutionlist.h"
 
 /*
 * q: queue of permutations (pairlists)
@@ -21,7 +23,7 @@ typedef struct threadInfo {
 
 typedef struct clThreadInfo {
     CLQueue* q;
-    SolutionList c;
+    SolutionList s;
     ConditionList t;
     int e;
     int* f;
@@ -31,6 +33,6 @@ void* sufficientThread(void* data);
 void* necessaryThread(void* data);
 
 threadInfo* infoCreate(Queue* q, ConditionList c, ConditionList t, int e, int* f);
-clThreadInfo* clInfoCreate(CLQueue* q, SolutionList c, ConditionList t, int e, int* f);
+clThreadInfo* clInfoCreate(CLQueue* q, SolutionList s, ConditionList t, int e, int* f);
 
 #endif

@@ -1,5 +1,5 @@
 PROG = causal
-OBJS = Main.o pairlist.o conditionlist.o helper.o queue.o thread.o
+OBJS = Main.o pairlist.o conditionlist.o helper.o queue.o thread.o clqueue.o solutionlist.o
 CC = gcc
 CFLAGS = -g -Wall
 
@@ -13,7 +13,7 @@ clean:
 
 Main.o: Main.c conditionlist.h helper.h thread.h
 
-helper.o: conditionlist.h queue.h
+helper.o: clqueue.h conditionlist.h queue.h
 
 conditionlist.o: pairlist.h
 

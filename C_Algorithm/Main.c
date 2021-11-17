@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     int numPotEffects = 0;
     ConditionList conditionList;
     ConditionList sufficientSet;
+    SolutionList solutions;
 
     //read csv - if given a csv in "NAME.csv", it will override this
     FILE *stream = fopen("TESTINPUT.csv", "r");
@@ -88,14 +89,18 @@ int main(int argc, char *argv[])
             printf("end ConditionList_______________________\n");
         }
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
+        CList_print(sufficientSet);
 
         free(conditionList);
 
+        CList_print(table);
+
         //step 5
-        if(check_necessary(table, sufficientSet, effect))
+        if(check_necessary(table, sufficientSet, potential_effects[effect]))
         {
             //step 6
-            step6(table, sufficientSet, effect);
+            solutions = step6(table, sufficientSet, potential_effects[effect]);
+            print_sl(solutions);
         }
     }
     free(potential_effects);

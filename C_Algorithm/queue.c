@@ -14,6 +14,7 @@ struct Queue* createQueue(unsigned capacity)
     // This is important, see the enqueue
     queue->rear = capacity - 1;
     queue->array = (PairList*)malloc(queue->capacity * sizeof(PairList));
+    queue->lock = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
     queue->addCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     queue->removeCond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
     return queue;
@@ -42,7 +43,6 @@ void enqueue(struct Queue* queue, PairList item)
         if (isFull(queue))
             pthread_cond_wait(&(queue->addCond), &(queue->lock));
         else {
-            printf("adding to queue\n");
             queue->rear = (queue->rear + 1) % queue->capacity;
             queue->array[queue->rear] = item;
             queue->size = queue->size + 1;
@@ -63,7 +63,6 @@ PairList dequeue(struct Queue* queue, int* flag)
     while (1) {
         if (isEmpty(queue)) {
             if (*flag) {
-                printf("exiting\n");
                 pthread_mutex_unlock(&(queue->lock));
                 pthread_exit(0);
             }
@@ -71,7 +70,6 @@ PairList dequeue(struct Queue* queue, int* flag)
                 pthread_cond_wait(&(queue->removeCond), &(queue->lock));
         }
         else {
-            printf("removing from queue\n");
             PairList item = queue->array[queue->front];
             queue->front = (queue->front + 1) % queue->capacity;
             queue->size = queue->size - 1;
