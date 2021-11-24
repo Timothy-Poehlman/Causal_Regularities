@@ -1,5 +1,5 @@
 Universe	= vanilla
-Executable	= ./C_algorithm/Main.c
+Executable	= C_Algorithm/causal
 Output 		= out.log
 Error		= err.log
 Log		= condor.log
