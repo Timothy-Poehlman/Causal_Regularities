@@ -46,4 +46,6 @@ int clIsFull(struct CLQueue* queue);
 // It initializes size of queue as 0
 struct CLQueue* createCLQueue(unsigned capacity);
 
+void clQueueFree(struct CLQueue* queue);
+
 #endif

@@ -28,12 +28,13 @@ int sl_contains(SolutionList sList, ConditionList cList) {
 }
 
 void sl_t_setInsert(ConditionList cList, SolutionList sList) {
-	SolutionNode new_node = create_solution_node(cList);
 	pthread_mutex_lock(&(sList->lock));
 	if (sl_contains(sList, cList)) {
+		CList_free(cList);
 		pthread_mutex_unlock(&(sList->lock));
 		return;
 	}
+	SolutionNode new_node = create_solution_node(cList);
 	if (sList->end) {
 		sList->end->next = new_node;
 		sList->end = new_node;
@@ -46,14 +47,24 @@ void sl_t_setInsert(ConditionList cList, SolutionList sList) {
 }
 
 void print_sl(SolutionList sList){
-	printf("printing sol list, first is size %d\n",sList->front->solution->size);
 	if(!sList->front->solution){
-		printf("empty\n");
+		printf("No Solution\n");
 	}
 	SolutionNode current = sList->front;
 	while(current){
 		CList_print(current->solution);
+		printf("\n");
 		current = current->next;
 	}
-	printf("finished printing SL\n");
+}
+
+void sl_free(SolutionList sList) {
+	SolutionNode current = sList->front;
+	while (current) {
+		SolutionNode temp = current;
+		current = current->next;
+		CList_free(temp->solution);
+		free(temp);
+	}
+	free(sList);
 }

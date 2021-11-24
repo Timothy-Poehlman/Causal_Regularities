@@ -43,7 +43,13 @@ PairList CList_Pop(ConditionList cList){
 }
 
 void CList_free(ConditionList c) {
-
+    PairList current = c->list;
+    while (current) {
+        PairList temp = current;
+        current = current->next;
+        pairList_free(temp);
+    }
+    free(c);
 }
 
 int CList_contains(ConditionList c, PairList p) {
@@ -66,7 +72,6 @@ void CList_print(ConditionList c) {
         printf("\n");
         current = current->next;
     }
-    printf("\n");
 }
 
 ConditionList CList_Copy(ConditionList c){
@@ -102,6 +107,9 @@ void t_setInsert(ConditionList cList, PairList pList) {
     pthread_mutex_lock(&(cList->lock));
     if(!CList_contains(cList,pList)){
         CList_add(cList,pList);
+    }
+    else {
+        pairList_free(pList);
     }
     pthread_mutex_unlock(&(cList->lock));
 }

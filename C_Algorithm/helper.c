@@ -3,6 +3,8 @@
 #include <string.h>
 #include "helper.h"
 
+
+//NEEDS REWORK CAUSES SMALL MEMORY LEAK BY CREATING AN EXTRA PAIRLIST
 ConditionList prepare_table(FILE* input_table)
 {
     ConditionList table = make_CList();
@@ -44,13 +46,15 @@ int rowDuplicity(ConditionList table,int factor)
         tmpList = copy_pairList(current);
         tmpList->list[factor]->value = 1 - tmpList->list[factor]->value;
         if (CList_contains(rowSet, tmpList)) {
-            free(tmpList);
+            pairList_free(tmpList);
+            CList_free(rowSet);
             return 1;
         }
         tmpList->list[factor]->value = 1 - tmpList->list[factor]->value;
         CList_add(rowSet, tmpList);
         current = current->next;
     }
+    CList_free(rowSet);
     return 0;
 }
 

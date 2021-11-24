@@ -107,3 +107,11 @@ Pair pairList_pop(PairList p){
     p->location--;
     return output;
 }
+
+void pairList_free(PairList l) {
+    for (int i = 0; i < l->location;i++) {
+        free(l->list[i]);
+    }
+    free(l->list);
+    free(l);
+}

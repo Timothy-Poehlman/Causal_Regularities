@@ -46,4 +46,6 @@ int isFull(struct Queue* queue);
 // It initializes size of queue as 0
 struct Queue* createQueue(unsigned capacity);
 
+void queueFree(struct Queue* queue);
+
 #endif

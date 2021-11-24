@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     SolutionList solutions;
 
     //read csv - if given a csv in "NAME.csv", it will override this
-    FILE *stream = fopen("TESTINPUT.csv", "r");
+    FILE *stream = fopen("zoo_cleanedl.csv", "r");
 
     //check argumentss
     /*  setStream causing issues
@@ -47,8 +47,6 @@ int main(int argc, char *argv[])
     */
 
     ConditionList table = prepare_table(stream);
-
-    CList_print(table);
 
     potential_effects = step0(table, NegFactorSet, &numPotEffects);
 
@@ -78,7 +76,7 @@ int main(int argc, char *argv[])
         //Debug
         if (debug)
         {
-            printf("ConditionList_________________\n");
+            printf("Sufficient Conditions:\n");
             PairList currentList = conditionList->list;
             while (currentList)
             {
@@ -86,24 +84,30 @@ int main(int argc, char *argv[])
                 printf("\n");
                 currentList = currentList->next;
             }
-            printf("end ConditionList_______________________\n");
+            printf("\n");
         }
+        
         sufficientSet = step3(conditionList, table, potential_effects[effect]);
+        
+        printf("Minimally Sufficient Conditions:\n");
         CList_print(sufficientSet);
+        printf("\n");
 
-        free(conditionList);
-
-        CList_print(table);
+        CList_free(conditionList);
 
         //step 5
         if(check_necessary(table, sufficientSet, potential_effects[effect]))
         {
             //step 6
             solutions = step6(table, sufficientSet, potential_effects[effect]);
+            printf("Minimally Sufficient Minimally Necessary Conditions:\n");
             print_sl(solutions);
         }
+        //CList_free(sufficientSet);
+        //sl_free(solutions);
     }
-    free(potential_effects);
+    //CList_free(table);
+    //free(potential_effects);
 }
 
 /* STEP 0
@@ -118,7 +122,6 @@ int *step0(ConditionList table, int *NegFactorSet, int *numPotEffects)
     int W_index = 0;
     for (int i = 0; i < cols; i++)
     {
-        printf("checking index %d\n", i);
         if (!(rowDuplicity(table, i) || intArrayIn(i, NegFactorSet)))
         {
             W[W_index] = i;
@@ -152,6 +155,9 @@ ConditionList step2(ConditionList table, int effect)
         if (check_sufficient(condition, table, effect))
         {
             CList_add(conditionList, condition);
+        }
+        else {
+            pairList_free(condition);
         }
         tmpPList = tmpPList->next;
     }
@@ -195,6 +201,9 @@ ConditionList step3(ConditionList inputConditions, ConditionList table, int effe
         pthread_join(threadIds[i], NULL);
     }
 
+    free(info);
+    queueFree(queue);
+
     return minimally_sufficient_conditions;
 }
 
@@ -229,6 +238,9 @@ SolutionList step6(ConditionList table, ConditionList necessary_conditions, int 
     {
         pthread_join(threadIds[i], NULL);
     }
+
+    free(info);
+    clQueueFree(queue);
 
     return minimally_necessary_conditions;
 }

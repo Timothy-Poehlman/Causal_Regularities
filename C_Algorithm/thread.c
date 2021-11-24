@@ -28,6 +28,9 @@ void* sufficientThread(void* data){
             if(!check_sufficient(permutation,table,effect)){
                 pairList_append(permutation,removedPair);
             }
+            else {
+                free(removedPair);
+            }
         }
         //thread_insert, loops through to make sure perm is not already in
         t_setInsert(condList,permutation);
@@ -57,6 +60,9 @@ void* necessaryThread(void* data){
             //is still necessary?
             if(!check_necessary(table,condition,effect)){
                 CList_add(condition,removedPairList);
+            }
+            else {
+                pairList_free(removedPairList);
             }
         }
         //thread_insert, loops through to make sure perm is not already in

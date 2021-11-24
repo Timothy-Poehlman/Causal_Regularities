@@ -96,3 +96,12 @@ ConditionList clRear(struct CLQueue* queue)
         return NULL;
     return queue->array[queue->rear];
 }
+
+void clQueueFree(struct CLQueue* queue)
+{
+    while (!clIsEmpty(queue)) {
+        CList_free(clDequeue(queue, 0));
+    }
+    free(queue->array);
+    free(queue);
+}

@@ -96,3 +96,12 @@ PairList rear(struct Queue* queue)
         return NULL;
     return queue->array[queue->rear];
 }
+
+void queueFree(struct Queue* queue)
+{
+    while (!isEmpty(queue)) {
+        pairList_free(dequeue(queue, 0));
+    }
+    free(queue->array);
+    free(queue);
+}
