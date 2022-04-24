@@ -209,14 +209,14 @@ ConditionList step3(ConditionList input_conditions, ConditionList table, int eff
 
 
 /* Minimally Necessary Minimally Sufficient Conditions
- * NEEDS REVISION **
+ * 
  */
 
 SolutionList step6(ConditionList table, ConditionList necessary_conditions, int effect)
 {
     SolutionList minimally_necessary_conditions = create_solutionList();
 
-    cl_queue *queue = createcl_queue(num_threads);
+    CLQueue *queue = createCLQueue(num_threads);
 
     int is_done = 0;
 
