@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     SolutionList solutions;
 
     //read csv - if given a csv in "NAME.csv", it will override this
-    FILE *stream = fopen("zoo_cleanedl.csv", "r");
+    FILE *stream = fopen("zoo_cleaned.csv", "r");
 
     //check argumentss
     /*  setStream causing issues
