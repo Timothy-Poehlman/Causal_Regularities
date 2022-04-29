@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
         //step 5
         if(check_necessary(table, sufficient_set, potential_effects[effect]))
         {
+            printf("started necessary checking\n");
             //step 6
             solutions = step6(table, sufficient_set, potential_effects[effect]);
             printf("Minimally Sufficient Minimally Necessary Conditions:\n");
@@ -187,10 +188,13 @@ ConditionList step3(ConditionList input_conditions, ConditionList table, int eff
 
     // Loop through each condition, check all permutations, add them if they pass to [queue]
     PairList current = input_conditions->list;
+    int num_perms = 0;
     while (current)
     {
         plPermutations(current, 0, current->location - 1, queue);
         current = current->next;
+        num_perms++;
+        printf("%d/%d, %d remaining\n", num_perms, input_conditions->size, queue->size);
     }
     // Set flag to notify we are done creating permutations
     *(info->f) = 1;

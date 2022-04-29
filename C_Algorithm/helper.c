@@ -3,6 +3,8 @@
 #include <string.h>
 #include "helper.h"
 
+static int perm_count = 0;
+
 
 //NEEDS REWORK CAUSES SMALL MEMORY LEAK BY CREATING AN EXTRA PAIRLIST
 ConditionList prepare_table(FILE* input_table)
@@ -12,18 +14,18 @@ ConditionList prepare_table(FILE* input_table)
     char line[2];
     PairList pList = make_pairList();
 
-    while(fgets(line,2,input_table))
+    while (fgets(line, 2, input_table))
     {
-        if(line[0] == ',' || line[0] == '\r'){}
-        else if(line[0]=='\n')
+        if (line[0] == ',' || line[0] == '\r') {}
+        else if (line[0] == '\n')
         {
             c = 0;
-            CList_add(table,pList);
+            CList_add(table, pList);
             pList = make_pairList();
         }
         else
         {
-            pairList_append(pList, make_pair(c,atoi(&line[0])));
+            pairList_append(pList, make_pair(c, atoi(&line[0])));
             c++;
         }
     }
@@ -116,15 +118,24 @@ int check_sufficient(PairList condition,ConditionList table,int effect)
  *              outputQueue: The queue that the solutions should be put into
  */
 void plPermutations(PairList input, int l, int r, Queue* outputQueue) {
-    if (l==r) {
+    perm_count = 0;
+    plPermutationsHelper(input, l, r, outputQueue);
+}
+
+
+void plPermutationsHelper(PairList input, int l, int r, Queue* outputQueue) {
+    if (l == r) {
         //output
+        perm_count++;
+        if(perm_count % 100000 == 0)
+            printf("%d\n", perm_count);
         PairList copy = copy_pairList(input);
-        enqueue(outputQueue,copy);
+        enqueue(outputQueue, copy);
     }
     else {
-        for (int i = l; i <= r;i++) {
+        for (int i = l; i <= r; i++) {
             plSwap(input->list + l, input->list + i);
-            plPermutations(input, l + 1, r, outputQueue);
+            plPermutationsHelper(input, l + 1, r, outputQueue);
             plSwap(input->list + l, input->list + i);
         }
     }
@@ -138,16 +149,24 @@ void plSwap(Pair* a, Pair* b) {
 }
 
 void clPermutations(ConditionList input, PairList l, CLQueue* outputQueue) {
+    perm_count = 0;
+    clPermutationsHelper(input, l, outputQueue);
+}
+
+void clPermutationsHelper(ConditionList input, PairList l, CLQueue* outputQueue) {
     PairList current = l;
     if (!current) {
         //output
+        perm_count++;
+        if (perm_count % 10000000 == 0)
+            printf("%d\n", perm_count);
         ConditionList copy = CList_Copy(input);
         clEnqueue(outputQueue, copy);
     }
     else {
         while (current) {
             clSwap(l, current);
-            clPermutations(input, l->next, outputQueue);
+            clPermutationsHelper(input, l->next, outputQueue);
             clSwap(l, current);
             current = current->next;
         }
